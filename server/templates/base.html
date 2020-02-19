@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <!-- <link rel="stylesheet" type="text/css" href="/static/css/styles.css" /> -->
+  </head>
+
+  <body>
+    <nav>
+      <a href="/"> HOMEPAGE </a><br />
+      <a href="/login"> LOG IN </a><br />
+      <a href="/logout"> LOG OUT </a><br />
+      <a href="/register"> REGISTER NEW USER </a><br />
+      <a href="/create-list"> CREATE NEW LIST </a><br />
+      <a href="/all-records"> YOUR LISTS </a><br />
+    </nav>
+
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <ul class="flashes">
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %} {% endwith %}
+
+    <!-- This is where the main content goes. -->
+    {% block body %} {% endblock %}
+  </body>
+</html>

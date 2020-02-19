@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+{% extends 'base.html' %} {% block body %}
+
+<body>
+  <!-- Create a div for every Most Loved Melon using a Jinja for-loop -->
+  <!-- <h1>Welcome {{ session["name"] }}</h1> -->
+  <h1>{{record_id}}</h1>
+
+  <h2>Items:</h2>
+  <!-- <h3> <span>Record ID  </span><span>  Date Created</span><span>  Total CO2</span></h3> -->
+  {% for item in all_items %}
+  <h3><li>{{ item.food_id}} - {{ item.qty }} kg</li></h3>
+  {% endfor %}
+  <!-- {% for food in foods %}
+        <div class="food-list">
+          <h3>{{food.food_id}}</h3>
+          <h2>{{food.gwp}}</h2>
+        </div>
+      {% endfor %} -->
+</body>
+
+{% endblock %}

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+{% extends 'base.html' %} {% block body %}
+
+<body>
+  <!-- Create a div for every Most Loved Melon using a Jinja for-loop -->
+  <!-- <h1>Welcome {{ session["name"] }}</h1> -->
+  <h1>Register</h1>
+  <form action="/register" method="POST">
+    <label>Username:</label>
+    <input type="text" name="username" required />
+    <label>Password:</label>
+    <input type="password" name="password" required />
+    <button type="submit">Submit</button>
+  </form>
+
+  <!-- {% for food in foods %}
+        <div class="food-list">
+          <h3>{{food.food_id}}</h3>
+          <h2>{{food.gwp}}</h2>
+        </div>
+      {% endfor %} -->
+</body>
+
+{% endblock %}

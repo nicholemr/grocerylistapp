@@ -1,37 +1,80 @@
-import React, { useState } from "react";
+import React from "react";
 import FoodList from "./foodList";
 
-const FoodForm = () => {
-  const [food_id, setFoodid] = useState("");
-  const [food_qty, setQty] = useState("");
+class FoodForm extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      foodId: "",
+      foodQty: "",
+      foodCo2: "",
+    }
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);   
+  }
 
-  return (
-    <div className="search-food">
-      <form>
-        <label htmlFor="food_id">
-          Food ID:
-          <input
-            id="food_id"
-            value={food_id}
-            placeholder="Enter Food ID"
-            onChange={event => setFoodid(event.target.value)}
-          />
-        </label>
-        <label htmlFor="food_qty">
-          Quantity (kg)
-          <input
-            id="food_qty"
-            value={food_qty}
-            placeholder="Enter Quantity"
-            onChange={event => setQty(event.target.value)}
-          />
-        </label>
-        {food_id}{food_qty}
-        <button>Submit</button>
-        <FoodList foodId={food_id} foodQty={food_qty}/>
-      </form>
-    </div>
-  );
-};
+  handleChange(event){
+    this.setState({
+        [event.target.name]: event.target.value,
+    })
+  }
+
+
+  handleSubmit(event) {
+    let url = "http://localhost:5000/get-food";
+    const formData = {foodId: this.state.foodId, foodQty: this.state.foodQty}
+    fetch(url, {method: 'POST',
+                mode:'cors',
+                body: JSON.stringify(formData),
+                credentials: 'include',
+                headers:{"Content-Type":"application/json"} })
+      .then(res => res.json())
+      .then(json => {
+        if (json.found_foodid){
+          console.log(json)
+          this.setState({ foodCo2: json.item_co2})
+
+        } else {
+          alert(json.message)
+        }
+        },(error) => {console.error(error)});
+    event.preventDefault();      
+  }
+
+  render(){
+    console.log(this.state.foodCo2)
+    return (
+      <div className="search-food">
+        <form onSubmit={this.handleSubmit}>
+          <label htmlFor="food_id">
+            Food ID:
+            <input
+              id="foodId"
+              name="foodId"
+              value={this.state.foodId}
+              placeholder="Enter Food ID"
+              onChange={this.handleChange}
+            />
+          </label>
+          <label htmlFor="food_qty">
+            Quantity (kg)
+            <input
+              id="foodQty"
+              name="foodQty"
+              value={this.state.foodQty}
+              placeholder="Enter Quantity"
+              onChange={this.handleChange}
+            />
+          </label>
+          <li>{this.state.foodId}</li>
+          <li>{this.state.foodQty}</li>
+          <li>{this.state.foodCo2}</li>
+          <button>Submit</button>
+          {/* <FoodList foodId={this.state.foodId} foodQty={this.state.foodQty}/> */}
+        </form>
+      </div>
+    );
+    }}
+  
 
 export default FoodForm;

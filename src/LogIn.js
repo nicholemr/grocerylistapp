@@ -1,6 +1,7 @@
 import React from "react";
 import LogOut from "./LogOut"
 import RegisterUser from "./RegisterUser"
+import UserLists from "./userLists"
 
 
 class LogIn extends React.Component {
@@ -11,8 +12,8 @@ class LogIn extends React.Component {
             password : "",
             logIn : null,
         }
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);   
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);   
     }
 
     handleChange(event){
@@ -22,7 +23,7 @@ class LogIn extends React.Component {
     }
 
     handleSubmit(event){
-        const url = "http://localhost:5000/login"
+        let url = "http://localhost:5000/login"
         const formData = {username:this.state.username, password:this.state.password}
 
         fetch(url, {method: 'POST',
@@ -32,7 +33,7 @@ class LogIn extends React.Component {
                     headers:{"Content-Type":"application/json"}} 
             ).then(res=> res.json()
                 ).then((result)=> {
-                    console.log(result)
+                    console.log('handleSubmit result: ', result)
                     if (result.login){
                         this.setState({logIn: true})
                         alert(result.message)
@@ -42,14 +43,31 @@ class LogIn extends React.Component {
 
         event.preventDefault();
     }
+
+    componentDidMount(){
+        console.log('mounted!')
+
+        let url = "http://localhost:5000/login"
+        fetch(url,
+                {mode: 'cors',
+                credentials: 'include'},
+            ).then(res=> res.json()
+                ).then((result)=> {
+                    console.log('componentDidMount result: ', result)
+                    if (result.login){
+                        this.setState({logIn: true})
+                    } 
+                },
+                (error) => {console.error(error)})
+    }
     
     render(){
-        console.log(this.state.username)
-        console.log(this.state.logIn)
+        console.log("render() this.state.username: ", this.state.username)
+        console.log("render() this.state.logIn: ", this.state.logIn)
         if (!this.state.logIn){
             return (
                <div>
-                   <RegisterUser />
+                   <li><RegisterUser /></li>
                     <div className="login-form" >
                     <h3>Log In</h3>
                     <form onSubmit={this.handleSubmit}>
@@ -81,7 +99,12 @@ class LogIn extends React.Component {
                 </div>
             );
         } else {
-            return (<LogOut/>)
+            return (
+            <div>
+                <li><LogOut/></li>
+                <li><UserLists/></li>
+            </div>
+            )
         }
     } //render
 };//logIn func

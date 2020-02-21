@@ -7,7 +7,7 @@ const LogOut = () => {
     //   }
 
     return (
-        <a href="http://localhost:5000/logout">Log Out</a>
+        <a id="log-out" href="http://localhost:5000/logout">Log Out</a>
     );
 }
 

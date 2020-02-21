@@ -9,18 +9,18 @@ class FoodList extends React.Component {
   }
   
   componentDidMount(){
-    fetch("http://localhost:5000/")
-    .then(res=> res.json()).then(
-      (result)=> {
-        console.log(result)
-        this.setState({
-           foods: result.foods
-        })
-      },
-      (error) => {
-        console.error(error)
-      }
-    )
+    // fetch("http://localhost:5000/get-food")
+    // .then(res=> res.json()).then(
+    //   (result)=> {
+    //     console.log(result)
+    //     this.setState({
+    //        foods: result.foods
+    //     })
+    //     },
+    //   (error) => {
+    //     console.error(error)
+    //   }
+    // )
   }
 
   render() {
@@ -31,9 +31,9 @@ class FoodList extends React.Component {
       <ul>Food Items</ul>
       <li>FoodId = {this.props.foodId}</li>
       <li>FoodQty = {this.props.foodQty}</li>
-      {this.state.foods.map(food => (
+      {/* {this.state.foods.map(food => (
         <li key={food}>{food}</li>
-      ))}
+      ))} */}
     </div>
     )}
 };

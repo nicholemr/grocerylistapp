@@ -22,7 +22,7 @@ class NavBar extends React.Component {
     return (
       <nav className="menu">
         <ul className="menu-list">{this.createMenuItems()}
-        <li><LogIn /></li>
+        <LogIn />
         </ul>
       </nav>
     );

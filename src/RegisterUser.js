@@ -7,7 +7,7 @@ const RegisterUser = () => {
     //   }
 
     return (
-        <a href="http://localhost:5000/logout">Register New User</a>
+        <a id="register-user" href="http://localhost:5000/logout">Register New User</a>
     );
 }
 

@@ -64,7 +64,18 @@ def register_process():
 def log_in_form():
     """log in user"""
 
-    if request.method == 'POST':
+    if request.method == 'GET':
+        if session.get('username'):
+            print("session[username]: ", session['username'])
+            loggeduser = session['username']
+            return jsonify({'login': True,
+                            "message": f"{loggeduser} is already logged in!",
+                            "username": f"{loggeduser}"})
+        else:
+            return jsonify({'login': False, 'message': 'Please Log In'})
+
+    elif request.method == 'POST':
+
         username = request.get_json()['username']
         password = request.get_json()['password']
 
@@ -76,6 +87,7 @@ def log_in_form():
             loggeduser = session['username']
             return {'login': True, "message": f"{loggeduser} is already logged in!"}
         elif user:
+            # if user is found in DB, create new log-in session
             session['username'] = user.username
             print("session[username]: ", session['username'])
             return jsonify({'login': True,
@@ -98,30 +110,15 @@ def log_out():
 @app.route('/get-food', methods=["GET", 'POST'])
 def get_food():
     """
-    if GET: query food items and co2 values
     if POST: add food items to grocery list
     """
-    # ********* OG *********
-    # food = request.args.get('food')
-    # qty = request.args.get('qty')
-    food_id = request.get_json()['food'].capitalize()
-    qty = request.get_json()['qty']
+    print('requestion food...')
+    food_id = request.get_json()['foodId'].capitalize()
+    qty = request.get_json()['foodQty']
     check_food_obj = Food.query.filter(
         Food.food_id.like(f'%{food_id}%')).first()
 
-    if request.method == 'GET':
-        # check_food_obj that food_id is in Foods table
-        if check_food_obj:
-            # if user input matched a food_id instance in Foods
-            # and if a record id has been initiated
-            food = check_food_obj.food_id
-            item_co2 = check_food_obj.gwp * int(qty)
-
-            return jsonify({food: {"qty": qty, "item_co2": item_co2}})
-        else:
-            return f'{food_id} not found in database'
-
-    elif request.method == 'POST':
+    if request.method == 'POST':
 
         if session.get('record_id') or session.get('total_co2'):
             if check_food_obj and session.get('record_id'):
@@ -150,7 +147,18 @@ def get_food():
             else:
                 return f'{food_id} not found in database'
         else:
-            return 'need to create new record id on /create-list'
+            print('requesting food...not registered')
+            if check_food_obj:
+                # if user input matched a food_id instance in Foods
+                # and if a record id has been initiated
+                food_id = check_food_obj.food_id
+                item_co2 = check_food_obj.gwp * int(qty)
+
+                return jsonify({"food_id": food_id, "qty": qty, "item_co2": item_co2,
+                                'message': 'need to create new list',
+                                "found_foodid": True})
+            else:
+                return jsonify({"message": f"{food_id} not found"})
 
 
 @app.route('/create-list')

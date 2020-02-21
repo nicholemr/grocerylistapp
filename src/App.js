@@ -1,9 +1,7 @@
 import React from 'react';
 import './App.css';
 import FoodForm from "./searchFood";
-
 import NavBar from "./NavBar";
-import LogIn from "./LogIn";
 
 
 function App() {
@@ -12,7 +10,7 @@ function App() {
 
   return (
     <div>
-      <NavBar />
+      <NavBar/>
       
       <FoodForm />
       

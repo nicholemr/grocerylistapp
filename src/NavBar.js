@@ -1,10 +1,19 @@
 import React from "react";
+import LogIn from "./LogIn"
 
 class NavBar extends React.Component {
-  createMenuItems = () => {
+
+  navLinks = {
+            homepage: {
+              title: "Homepage",
+              link: "http://localhost:8888/"
+            },
+  };
+
+  createMenuItems = () => { 
     let menuItems = [];
-    for (let k in this.props.menuItems) {
-      menuItems.push(<li key={k}>{this.props.menuItems[k].title}</li>);
+    for (let k in this.navLinks) {
+      menuItems.push(<li key={k}><a href={this.navLinks[k].link}>{this.navLinks[k].title}</a></li>);
     }
     return menuItems;
   };
@@ -12,7 +21,9 @@ class NavBar extends React.Component {
   render() {
     return (
       <nav className="menu">
-        <ul className="menu-list">{this.createMenuItems()}</ul>
+        <ul className="menu-list">{this.createMenuItems()}
+        <li><LogIn /></li>
+        </ul>
       </nav>
     );
   }

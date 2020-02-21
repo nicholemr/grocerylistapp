@@ -36,6 +36,13 @@ body {
   /* background-color: #111; */
 }
 
+/* LOG IN */
+
+.login-form {
+  padding: 20px;
+}
+
+
 /* foodList */
 ul li {
   margin: 5px;
@@ -73,7 +80,34 @@ li {
 
 .search-food label {
   display: inline-block;
+  /* width: 200px; */
+  margin: 5px;
+  /* float: */
+}
+/* .search-food label input #food_id{
+  display: inline-block;
   width: 100px;
+  margin: 15px;
+  padding-right: 15px;
+} */
+
+.search-food input, .search-food select {
+  margin-bottom: 30px;
+  font-size: 18px;
+  height: 30px;
+  width: 100px;
+}
+
+.search-food input {
+  display: inline-block;
+  width: 10px;
+  margin: 10px;
+  padding-left: 15px;
+}
+
+input #food-qty {
+  width: 700px;
+  margin-left: auto;
 }
 
 .search-food button,
@@ -108,14 +142,24 @@ li {
   height: 30px;
   width: 325px;
 }
-.search {
+/* .search {
   background-color: #d9c148;
   width: 715px;
   padding: 15px;
   border-radius: 9px;
   float: left;
-  margin-bottom: 25px;
+  margin-bottom: 25px; */
+/* } */
+
+.food-list {
+  padding-right: 50px;
+  /* text-align: left; */
+  /* align-items: left; */
+  align-content: left;
+  margin-left: 0;
 }
+
+
 
 /* header > a,
 #root > div > h1 {

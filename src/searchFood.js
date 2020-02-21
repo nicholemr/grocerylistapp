@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import FoodList from "./foodList";
 
 const FoodForm = () => {
-  const [food_id, setFoodid] = useState("Enter Food ID");
+  const [food_id, setFoodid] = useState("");
+  const [food_qty, setQty] = useState("");
 
   return (
     <div className="search-food">
@@ -15,7 +17,18 @@ const FoodForm = () => {
             onChange={event => setFoodid(event.target.value)}
           />
         </label>
+        <label htmlFor="food_qty">
+          Quantity (kg)
+          <input
+            id="food_qty"
+            value={food_qty}
+            placeholder="Enter Quantity"
+            onChange={event => setQty(event.target.value)}
+          />
+        </label>
+        {food_id}{food_qty}
         <button>Submit</button>
+        <FoodList foodId={food_id} foodQty={food_qty}/>
       </form>
     </div>
   );

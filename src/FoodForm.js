@@ -31,9 +31,8 @@ class FoodForm extends React.Component {
       .then(res => res.json())
       .then(json => {
         if (json.found_foodid){
-          console.log(json)
-          this.setState({ foodCo2: json.item_co2})
-
+          this.setState({ foodCo2: json.item_co2,
+                        foodId: json.food_id})
         } else {
           alert(json.message)
         }
@@ -42,9 +41,20 @@ class FoodForm extends React.Component {
   }
 
   render(){
-    console.log(this.state.foodCo2)
+
+    let display = <p></p>
+    if (this.state.foodCo2){
+      display = 
+        <ul>
+          <h3>Food List</h3>
+          <li>{this.state.foodId}  {this.state.foodQty} kg  {this.state.foodCo2} kg of CO2</li>
+        </ul>
+        
+    }
+
     return (
       <div className="search-food">
+        <h1>Query Food</h1>
         <form onSubmit={this.handleSubmit}>
           <label htmlFor="food_id">
             Food ID:
@@ -66,12 +76,12 @@ class FoodForm extends React.Component {
               onChange={this.handleChange}
             />
           </label>
-          <li>{this.state.foodId}</li>
-          <li>{this.state.foodQty}</li>
-          <li>{this.state.foodCo2}</li>
+          
           <button>Submit</button>
-          {/* <FoodList foodId={this.state.foodId} foodQty={this.state.foodQty}/> */}
+          
         </form>
+        {display}
+        
       </div>
     );
     }}

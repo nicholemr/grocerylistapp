@@ -63,16 +63,18 @@ def register_process():
 @app.route('/login', methods=["GET", 'POST'])
 def log_in_form():
     """log in user"""
-
+    print('received request')
     if request.method == 'GET':
         if session.get('username'):
-            print("session[username]: ", session['username'])
+            print("GET session[username]: ", session['username'])
             loggeduser = session['username']
             return jsonify({'login': True,
                             "message": f"{loggeduser} is already logged in!",
                             "username": f"{loggeduser}"})
         else:
-            return jsonify({'login': False, 'message': 'Please Log In'})
+            print('GET reqst', 'no user in session')
+            return jsonify({'login': False, 'message': 'Please Log In',
+                            "username": None})
 
     elif request.method == 'POST':
 
@@ -206,17 +208,18 @@ def user_records():
     if session.get('username'):
         user_obj = User.query.filter(
             User.username == session['username']).first()
-        user_records_dict = {}
+        user_records_dict = []
         record_count = 1
         for record in user_obj.records:
-            user_records_dict[record_count] = {
-                'date_created': record.date_created, 'total_co2': record.total_co2}
+            user_records_dict.append([record.date_created, record.total_co2])
+            # user_records_dict[record_count] = {
+            #     'date_created': record.date_created, 'total_co2': record.total_co2}
             record_count += 1
-        return jsonify(user_records_dict)
-        # return render_template('user_records.html', user_obj=user_obj)
+        print(user_records_dict)
+        return jsonify({"login": True, "lists": user_records_dict})
     else:
-        flash("Please log in")
-        return redirect("/login")
+        print("not logged in")
+        return jsonify({"login": False})
 
 
 @app.route('/user-records/<int:record_id>')

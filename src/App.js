@@ -1,21 +1,31 @@
 import React from 'react';
-import './App.css';
-import FoodForm from "./searchFood";
-import NavBar from "./NavBar";
+// import './App.css';
+import LogIn from "./LogIn"
 
-
-function App() {
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { 
+      username : "",
+      password : "",
+      logIn : null,
+     }
+  }
 
   
 
-  return (
-    <div>
-      <NavBar/>
+
+  render() { 
+
+    return ( 
+      <div>
+        <LogIn />
+
       
-      <FoodForm />
       
     </div>
-  );
+     );
+  }
 }
-
+ 
 export default App;

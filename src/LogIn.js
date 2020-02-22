@@ -1,8 +1,8 @@
 import React from "react";
 import LogOut from "./LogOut"
 import RegisterUser from "./RegisterUser"
-import UserLists from "./userLists"
-
+import FoodForm from "./FoodForm"
+import UserLIsts from "./userLists"
 
 class LogIn extends React.Component {
     constructor(props){
@@ -15,6 +15,23 @@ class LogIn extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);   
     }
+
+    componentDidMount(){
+        // sends a GET request to server to check if user in session
+        let url = "http://localhost:5000/login"
+        
+        fetch(url,
+                {mode: 'cors',
+                credentials: 'include'},
+            ).then(res=> res.json()
+                ).then((result)=> {
+                    if (result.login){
+                        this.setState({logIn: result.login,
+                            username: result.username})
+                    }
+                },
+                (error) => {console.error(error)})
+      }
 
     handleChange(event){
         this.setState({
@@ -33,37 +50,21 @@ class LogIn extends React.Component {
                     headers:{"Content-Type":"application/json"}} 
             ).then(res=> res.json()
                 ).then((result)=> {
-                    console.log('handleSubmit result: ', result)
+                    console.log('LogIn handleSubmit result: ', result)
                     if (result.login){
                         this.setState({logIn: true})
                         alert(result.message)
                     } else {
                         alert(result.message)
-                }},(error) => {console.error(error)})
+                    }
+                    },(error) => {console.error(error)})
 
         event.preventDefault();
     }
-
-    componentDidMount(){
-        console.log('mounted!')
-
-        let url = "http://localhost:5000/login"
-        fetch(url,
-                {mode: 'cors',
-                credentials: 'include'},
-            ).then(res=> res.json()
-                ).then((result)=> {
-                    console.log('componentDidMount result: ', result)
-                    if (result.login){
-                        this.setState({logIn: true})
-                    } 
-                },
-                (error) => {console.error(error)})
-    }
     
     render(){
-        console.log("render() this.state.username: ", this.state.username)
-        console.log("render() this.state.logIn: ", this.state.logIn)
+
+
         if (!this.state.logIn){
             return (
                <div>
@@ -102,7 +103,8 @@ class LogIn extends React.Component {
             return (
             <div>
                 <li><LogOut/></li>
-                <li><UserLists/></li>
+                <FoodForm />
+                <UserLIsts username={this.state.username}/>
             </div>
             )
         }

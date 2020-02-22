@@ -29,8 +29,9 @@ class FoodList extends React.Component {
     return (
     <div className="food-list">
       <ul>Food Items</ul>
-      <li>FoodId = {this.props.foodId}</li>
-      <li>FoodQty = {this.props.foodQty}</li>
+      <li>{this.props.foodId}</li>
+      <li>{this.props.foodQty}</li>
+      <li>{this.props.foodCo2}</li>
       {/* {this.state.foods.map(food => (
         <li key={food}>{food}</li>
       ))} */}

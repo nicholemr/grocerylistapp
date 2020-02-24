@@ -20,9 +20,6 @@ def homepage():
     if session.get('username'):
         user = User.query.filter(User.username == session['username']).first()
 
-    # ********* OG *********
-    # return render_template('index.html', foods=foods)
-
     return jsonify({'foods': foods_list})
 
 
@@ -63,7 +60,7 @@ def register_process():
 @app.route('/login', methods=["GET", 'POST'])
 def log_in_form():
     """log in user"""
-    print('received request')
+
     if request.method == 'GET':
         if session.get('username'):
             print("GET session[username]: ", session['username'])
@@ -113,17 +110,18 @@ def log_out():
 def get_food():
     """
     if POST: add food items to grocery list
+    if GET: queries food info from database
     """
-    print('requestion food...')
-    food_id = request.get_json()['foodId'].capitalize()
-    qty = request.get_json()['foodQty']
-    check_food_obj = Food.query.filter(
-        Food.food_id.like(f'%{food_id}%')).first()
 
     if request.method == 'POST':
+        # request is POST if user is logged in and a new grocery lis/record is created
+        food_id = request.get_json()['foodId'].capitalize()
+        qty = request.get_json()['foodQty']
+        check_food_obj = Food.query.filter(
+            Food.food_id.like(f'%{food_id}%')).first()
 
         if session.get('record_id') or session.get('total_co2'):
-            if check_food_obj and session.get('record_id'):
+            if check_food_obj:
                 # if user input matched a food_id instance in Foods
                 # and if a record id has been initiated
 
@@ -139,32 +137,40 @@ def get_food():
                 db.session.add(list_item)
                 db.session.commit()
 
-                list_items = {}
+                list_items = []
                 list_item_objs = List_item.query.filter(
                     List_item.record == record).all()
+                # print(list_item_objs)
                 for item in list_item_objs:
-                    list_items = {
-                        'food_id': item.food_id, 'qty': item.qty, 'co2 output': item.qty*item.food.gwp}
+                    list_items.append({
+                        'food_id': item.food_id, 'qty': item.qty, 'co2_output': item.qty*item.food.gwp})
+                print(list_items)
                 return jsonify(list_items)
-            else:
-                return f'{food_id} not found in database'
-        else:
-            print('requesting food...not registered')
-            if check_food_obj:
-                # if user input matched a food_id instance in Foods
-                # and if a record id has been initiated
-                food_id = check_food_obj.food_id
-                item_co2 = check_food_obj.gwp * int(qty)
-
-                return jsonify({"food_id": food_id, "qty": qty, "item_co2": item_co2,
-                                'message': 'need to create new list',
-                                "found_foodid": True})
             else:
                 return jsonify({"message": f"{food_id} not found"})
 
+    if request.method == 'GET':
+        # request is GET if user is logged in but did not create a new grocery list
+        food_id = request.args.get('foodId').capitalize()
+        qty = request.args.get('foodQty')
+        check_food_obj = Food.query.filter(
+            Food.food_id.like(f'%{food_id}%')).first()
 
-@app.route('/create-list')
-def create_list():
+        if check_food_obj:
+            # if user input matched a food_id instance in Foods
+            # and if a record id has been initiated
+            food_id = check_food_obj.food_id
+            item_co2 = check_food_obj.gwp * int(qty)
+
+            return jsonify({"food_id": food_id, "qty": qty, "item_co2": item_co2,
+                            'message': 'need to create new list',
+                            "found_foodid": True})
+        else:
+            return jsonify({"message": f"{food_id} not found"})
+
+
+@app.route('/create-record')
+def create_record():
     """if user is logged in, add list record into records table
     takes in total_co2 calculated, user_id, date_created
     """
@@ -182,7 +188,7 @@ def create_list():
                 Record.record_id == record_id).first()
             # total_co2 = session['total_co2']
             # updated record_obj with new total_co2 value
-
+            print(f'recordid already in session, {record_id}')
         else:
             # if record_id not in session, create one and add it to session and records table
             initial_co2 = 0
@@ -191,16 +197,18 @@ def create_list():
             db.session.add(record_obj)
             db.session.commit()
             session['record_id'] = record_obj.record_id
+            record_id = session['record_id']
             session['total_co2'] = initial_co2
+            print(f'new recordid created, {record_id}')
 
         list_items = List_item.query.filter(
             List_item.record_id == record_obj.record_id).all()
 
-        return 'new list created, add items using /add-food'
+        return jsonify({'recordid': record_id})
         # return render_template('create_list.html', date=date, record_obj=record_obj, list_items=list_items, total_co2=session['total_co2'], username = session['username'])
     else:
-
-        return redirect("/login")
+        print('please log in')
+        return jsonify({'message': 'please log in'})
 
 
 @app.route('/user-records')

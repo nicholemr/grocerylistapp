@@ -1,8 +1,8 @@
 import React from "react";
 import LogOut from "./LogOut"
 import RegisterUser from "./RegisterUser"
-import FoodForm from "./FoodForm"
 import UserLIsts from "./userLists"
+import CreateNewList from "./CreateNewList"
 
 class LogIn extends React.Component {
     constructor(props){
@@ -102,8 +102,9 @@ class LogIn extends React.Component {
         } else {
             return (
             <div>
-                <li><LogOut/></li>
-                <FoodForm />
+                <LogOut/>
+                <CreateNewList/>
+                
                 <UserLIsts username={this.state.username}/>
             </div>
             )

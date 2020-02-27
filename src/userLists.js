@@ -31,11 +31,23 @@ class UserLists extends React.Component{
     return (
         // <a id="view-all-lists" href=""> View All Lists </a>
         <div>
-            <h3>View All Lists by {this.props.username} </h3>
+            <h2>View All Lists by {this.props.username} </h2>
+            <table>
+                <thead>
+                    <tr>
+                    <th>Date Created</th>
+                    <th>Total CO2</th>
+                    </tr>
+                </thead>
+                <tbody>
             {this.state.userRecords.map(list =>(
-                <li key={list[1]}>{list[0]} - {list[1]} kg CO2</li>
+                <tr key={list[0]}>
+                    <td >{list[1]}</td>
+                    <td >{list[2]} kg CO2</td>
+                </tr>
             ))}
-
+            </tbody>
+            </table>
         </div>
     );
     }

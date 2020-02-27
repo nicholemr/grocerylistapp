@@ -28,3 +28,6 @@ dist/
 coverage/
 .vscode/
 .env
+
+.vscode
+my-app-VScode.code-workspace

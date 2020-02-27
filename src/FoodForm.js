@@ -72,33 +72,58 @@ class FoodForm extends React.Component {
     let listItemsDisplay = [];
     for (let i in this.state.listItems){
       listItemsDisplay.push(
-        <li key={i}>
-          <span>{this.state.listItems[i].food_id} </span>
-          <span> {this.state.listItems[i].qty} kg -</span>
-          <span>CO2 Output(kg): {this.state.listItems[i].co2_output} </span>
-        </li>
+        <tr key={i}>
+          <td>{this.state.listItems[i].food_id} </td>
+          <td>{this.state.listItems[i].qty}</td>
+          <td>{this.state.listItems[i].co2_output} </td>
+        </tr>
       )
     }
     return listItemsDisplay;
   }
 
   render(){
-    // console.log('hi',this.props.createdList)
-    
 
-    let display = <p></p>
+    let display = null;
     
-    if (this.state.foodCo2){
+    if (this.state.foodCo2 && !this.props.createdList){
       display = 
-        <ul id="food-list">
-          <h3 id="food-list">Food List</h3>
-          <li id="food-list">{this.state.foodId}  {this.state.foodQty} kg  {this.state.foodCo2} kg of CO2</li>
-        </ul>
+        // <ul id="food-list">
+        //   <h3 id="food-list">Food List</h3>
+          <table>
+            <thead>
+            <tr>
+              <th>Food ID</th>
+              <th>Quantity (kg)</th>
+              <th>CO2 Output (kg)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>{this.state.foodId}</td>
+              <td>{this.state.foodQty} kg</td>
+              <td>{this.state.foodCo2} kg of CO2</td>
+            </tr>
+            </tbody>
+        </table>
+    } else if (this.state.listItems.length>0 && this.props.createdList){
+      display = 
+      <table>
+        <thead>
+        <tr>
+          <th>Food ID</th>
+          <th>Quantity (kg)</th>
+          <th>CO2 Output (kg)</th>
+        </tr>
+        </thead>
+        <tbody>{this.createListItems()}</tbody>
+        
+      </table>
     }
 
     return (
       <div className="search-food">
-        <h1>Query Food</h1>
+        <h2>{this.props.formHeading}</h2>
         
         <form onSubmit={this.handleSubmit}>
           <label htmlFor="food_id">
@@ -111,8 +136,9 @@ class FoodForm extends React.Component {
               onChange={this.handleChange}
             />
           </label>
+          <span></span>
           <label htmlFor="food_qty">
-            Quantity (kg)
+            Quantity (kg):
             <input
               id="foodQty"
               name="foodQty"
@@ -125,7 +151,7 @@ class FoodForm extends React.Component {
           <button>Submit</button>
           
         </form>
-        {this.createListItems()}
+        
         {display}
         
       </div>

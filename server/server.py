@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, render_template, redirect, request, session, flash, Response
-from food_model import db, connect_to_db, Food, List_item, Record, User
+from food_model import db, connect_to_db, Food, Food_record, Record, User
 from datetime import datetime
+import pytz
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -23,79 +24,85 @@ def homepage():
     return jsonify({'foods': foods_list})
 
 
-@app.route('/register', methods=["GET", "POST"])
+# @app.route('/register', methods=["GET"])
+# def register_process():
+
+#     if session.get('username'):
+#         flash(
+#             f"Hi {session['username']}, please logout before registering a new user")
+#         return redirect("/")
+#     return render_template('register_form.html')
+
+@app.route('/register', methods=["POST"])
 def register_process():
+    """checks first if username and password are already in database,
+    creates new user instance in database if none found"""
 
-    if request.method == 'GET':
-        if session.get('username'):
-            flash(
-                f"Hi {session['username']}, please logout before registering a new user")
-            return redirect("/")
-        return render_template('register_form.html')
+    username = request.get_json()['username']
+    password = request.get_json()['password']
+    user = User.query.filter(
+        User.username == username, User.password == password).first()
 
-    if request.method == 'POST':
-        # ********* OG *********
-        # username = request.form.get('username')
-        # password = request.form.get('password')
+    if user:
+        session['username'] = user.username
+        print(user.username)
+        return jsonify({'login': True,
+                        "message": f"{user.username} is already registered!",
+                        "username": f"{user.username}"})
+    else:
+        new_user = User(username=username, password=password)
 
-        username = request.get_json()['username']
-        password = request.get_json()['password']
-        user = User.query.filter(
-            User.username == username, User.password == password).first()
-
-        if user:
-            session['username'] = user.username
-            flash(f'Hi {user.username}! you are already registered')
-            return redirect('/')
-        else:
-            new_user = User(username=username, password=password)
-            db.session.add(new_user)
-            db.session.commit()
-            session['username'] = new_user.username
-            flash(f'Welcome {new_user.username}!')
-
-        return redirect('/')
+        db.session.add(new_user)
+        db.session.commit()
+        print(new_user.username)
+        session['username'] = new_user.username
+        return jsonify({'login': True,
+                        "message": f'Welcome {new_user.username}!',
+                        "username": f"{new_user.username}"})
 
 
-@app.route('/login', methods=["GET", 'POST'])
+@app.route('/login', methods=["GET"])
 def log_in_form():
+    """route confirms that user is logged-in in server, sends
+    confirmation back to componentDidMount() on <LogIn />
+    """
+
+    if session.get('username'):
+        print("GET session[username]: ", session['username'])
+        loggeduser = session['username']
+        return jsonify({'login': True,
+                        "message": f"{loggeduser} is already logged in!",
+                        "username": f"{loggeduser}"})
+    else:
+        print('GET reqst', 'no user in session')
+        return jsonify({'login': False, 'message': 'Please Log In',
+                        "username": None})
+
+
+@app.route('/login', methods=['POST'])
+def log_in_form_post():
     """log in user"""
 
-    if request.method == 'GET':
-        if session.get('username'):
-            print("GET session[username]: ", session['username'])
-            loggeduser = session['username']
-            return jsonify({'login': True,
-                            "message": f"{loggeduser} is already logged in!",
-                            "username": f"{loggeduser}"})
-        else:
-            print('GET reqst', 'no user in session')
-            return jsonify({'login': False, 'message': 'Please Log In',
-                            "username": None})
+    username = request.get_json()['username']
+    password = request.get_json()['password']
 
-    elif request.method == 'POST':
+    user = User.query.filter(
+        User.username == username, User.password == password).first()
 
-        username = request.get_json()['username']
-        password = request.get_json()['password']
-
-        user = User.query.filter(
-            User.username == username, User.password == password).first()
-
-        if session.get('username'):
-            print("session[username]: ", session['username'])
-            loggeduser = session['username']
-            return {'login': True, "message": f"{loggeduser} is already logged in!"}
-        elif user:
-            # if user is found in DB, create new log-in session
-            session['username'] = user.username
-            print("session[username]: ", session['username'])
-            return jsonify({'login': True,
-                            'message': f'{user.username} is logged in!'})
-        else:
-            if session.get('username'):
-                print(session['username'])
-            return jsonify({'login': False,
-                            'message': 'wrong username and/or password'})
+    if session.get('username'):
+        # if user already in session
+        print("session[username]: ", session['username'])
+        loggeduser = session['username']
+        return {'login': True, "message": f"{loggeduser} is already logged in!"}
+    elif user:
+        # if user is found in DB, create new log-in session
+        session['username'] = user.username
+        print("session[username]: ", session['username'])
+        return jsonify({'login': True,
+                        'message': f'{user.username} is logged in!'})
+    else:
+        return jsonify({'login': False,
+                        'message': 'wrong username and/or password'})
 
 
 @app.route('/logout')
@@ -103,7 +110,7 @@ def log_out():
     """log out user"""
     session.clear()
     print('logged out!')
-    return redirect("http://localhost:8888")
+    return jsonify({'message': "you've been successfully logged out"})
 
 
 @app.route('/get-food', methods=["GET", 'POST'])
@@ -131,21 +138,22 @@ def get_food():
                 session['total_co2'] = session['total_co2'] + item_co2
                 totalco2 = session['total_co2']
                 record = Record.query.get(record_id)
-                record.update_total_co2(totalco2)
+                record.update_total_co2(round(totalco2, 2))
 
-                list_item = List_item(food_id=food_id, qty=qty, record=record)
+                list_item = Food_record(
+                    food_id=food_id, qty=qty, record=record)
                 db.session.add(list_item)
                 db.session.commit()
 
-                list_items = []
-                list_item_objs = List_item.query.filter(
-                    List_item.record == record).all()
+                food_records = []
+                list_item_objs = Food_record.query.filter(
+                    Food_record.record == record).all()
                 # print(list_item_objs)
                 for item in list_item_objs:
-                    list_items.append({
-                        'food_id': item.food_id, 'qty': item.qty, 'co2_output': item.qty*item.food.gwp})
-                print(list_items)
-                return jsonify(list_items)
+                    food_records.append({
+                        'food_id': item.food_id, 'qty': item.qty, 'co2_output': round(item.qty*item.food.gwp, 2)})
+                print(food_records)
+                return jsonify(food_records)
             else:
                 return jsonify({"message": f"{food_id} not found"})
 
@@ -177,7 +185,9 @@ def create_record():
 
     if session.get('username'):
         # if the user is logged in, create new grocery list Record
-        date = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+        sf_tz = pytz.timezone('US/Pacific')
+
+        date = datetime.now(sf_tz).strftime("%d %b %y, %H:%M:%S")
         username = session['username']
         user_id = User.query.filter(User.username == username).first().user_id
 
@@ -192,6 +202,8 @@ def create_record():
         else:
             # if record_id not in session, create one and add it to session and records table
             initial_co2 = 0
+            # record_obj = Record(
+            #     user_id=user_id, total_co2=initial_co2)
             record_obj = Record(
                 user_id=user_id, date_created=date, total_co2=initial_co2)
             db.session.add(record_obj)
@@ -201,11 +213,11 @@ def create_record():
             session['total_co2'] = initial_co2
             print(f'new recordid created, {record_id}')
 
-        list_items = List_item.query.filter(
-            List_item.record_id == record_obj.record_id).all()
+        food_records = Food_record.query.filter(
+            Food_record.record_id == record_obj.record_id).all()
 
         return jsonify({'recordid': record_id})
-        # return render_template('create_list.html', date=date, record_obj=record_obj, list_items=list_items, total_co2=session['total_co2'], username = session['username'])
+        # return render_template('create_list.html', date=date, record_obj=record_obj, food_records=food_records, total_co2=session['total_co2'], username = session['username'])
     else:
         print('please log in')
         return jsonify({'message': 'please log in'})
@@ -219,7 +231,8 @@ def user_records():
         user_records_dict = []
         record_count = 1
         for record in user_obj.records:
-            user_records_dict.append([record.date_created, record.total_co2])
+            user_records_dict.append(
+                [record.record_id, record.date_created, record.total_co2])
             # user_records_dict[record_count] = {
             #     'date_created': record.date_created, 'total_co2': record.total_co2}
             record_count += 1
@@ -234,16 +247,17 @@ def user_records():
 def record_details(record_id):
     record_id = record_id
     record = Record.query.get(record_id)
-    list_item_objs = List_item.query.filter(
-        List_item.record_id == record_id).all()
-    list_items = {}
-    list_item_objs = List_item.query.filter(List_item.record == record).all()
+    list_item_objs = Food_record.query.filter(
+        Food_record.record_id == record_id).all()
+    food_records = {}
+    list_item_objs = Food_record.query.filter(
+        Food_record.record == record).all()
     item_count = 1
     for item in list_item_objs:
-        list_items[item_count] = {
+        food_records[item_count] = {
             'food_id': item.food_id, 'qty': item.qty, 'co2 output': item.qty*item.food.gwp}
         item_count += 1
-    return jsonify(list_items)
+    return jsonify(food_records)
 
     # return render_template('record_details.html', all_items = all_items, record_id = record_id)
 

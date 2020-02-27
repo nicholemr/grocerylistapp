@@ -1,14 +1,33 @@
-import React from "react";
+import React, { Component } from 'react';
+class LogOut extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {  }
+    }
 
-const LogOut = () => {
-    // const logout: {
-    //     title: "Log Out",
-    //     link: "http://localhost:5000/logout"
-    //   }
+    handleClick(event) {
+        let url = `http://localhost:5000/logout`;
+        fetch(url, {method: 'GET',
+                    mode:'cors',
+                    credentials: 'include',
+                    })
+      .then(res => res.json())
+      .then(json => {
+          alert(json.message)
+        },(error) => {console.error(error)});
+        
+        event.preventDefault();   
+    }
 
-    return (
-        <a id="log-out" href="http://localhost:5000/logout">Log Out</a>
-    );
+    render() { 
+        return ( 
+        <div>
+        <button onClick={this.handleClick}>
+            Log Out
+        </button>
+        </div>
+         );
+    }
 }
-
+ 
 export default LogOut;

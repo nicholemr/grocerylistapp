@@ -63,48 +63,43 @@ class LogIn extends React.Component {
     }
     
     render(){
-
-
         if (!this.state.logIn){
             return (
-               <div>
-                   <li><RegisterUser /></li>
                     <div className="login-form" >
-                    <h3>Log In</h3>
-                    <form onSubmit={this.handleSubmit}>
-                        <label htmlFor="login-username">
-                        Username:
-                        <input
-                            id="login-username"
-                            type="text"
-                            name="username"
-                            value={this.state.username}
-                            placeholder="Enter Username"
-                            onChange={this.handleChange}
-                        />
-                        </label>
-                        <label htmlFor="login-password">
-                        Password:
-                        <input
-                            id="login-password"
-                            type="password"
-                            name="password"
-                            value={this.state.password}
-                            placeholder="Enter Password"
-                            onChange={this.handleChange}
-                        />
-                        </label>
-                        <button>Log In</button>
-                    </form>
+                        <h3>Log In</h3>
+                        <form onSubmit={this.handleSubmit}>
+                            <label htmlFor="login-username">
+                            Username:
+                            <input
+                                id="login-username"
+                                type="text"
+                                name="username"
+                                value={this.state.username}
+                                placeholder="Enter Username"
+                                onChange={this.handleChange}
+                            />
+                            </label>
+                            <label htmlFor="login-password">
+                            Password:
+                            <input
+                                id="login-password"
+                                type="password"
+                                name="password"
+                                value={this.state.password}
+                                placeholder="Enter Password"
+                                onChange={this.handleChange}
+                            />
+                            </label>
+                            <button>Log In</button>
+                        </form>
+                        <RegisterUser />
                     </div>
-                </div>
             );
         } else {
             return (
             <div>
                 <LogOut/>
                 <CreateNewList/>
-                
                 <UserLIsts username={this.state.username}/>
             </div>
             )

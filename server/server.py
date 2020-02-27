@@ -168,7 +168,7 @@ def get_food():
             # if user input matched a food_id instance in Foods
             # and if a record id has been initiated
             food_id = check_food_obj.food_id
-            item_co2 = check_food_obj.gwp * int(qty)
+            item_co2 = round(check_food_obj.gwp * int(qty), 2)
 
             return jsonify({"food_id": food_id, "qty": qty, "item_co2": item_co2,
                             'message': 'need to create new list',

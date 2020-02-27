@@ -7,7 +7,7 @@ itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.0
 SQLAlchemy==1.2.8
-Werkzeug==0.14.1
+Werkzeug==0.15.3
 autopep8==1.5
 pycodestyle==2.5.0
 pytz==2019.3

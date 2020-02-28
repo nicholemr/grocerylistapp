@@ -145,13 +145,17 @@ def get_food_post():
         db.session.add(food_record)
         db.session.commit()
 
-        food_records = []
+        food_records = {}
         food_record_objs = Food_record.query.filter(
             Food_record.record == record).all()
 
-        for food in food_record_objs:
-            food_records.append({
-                'food_id': food.food_id, 'qty': food.qty, 'co2_output': round(food.qty*food.food.gwp, 2)})
+        for food_record in food_record_objs:
+            food_records[food_record.item_id] = {
+                # 'item_id': food_record.item_id,
+                'food_id': food_record.food_id,
+                'qty': food_record.qty,
+                'co2_output': round(food_record.qty*food_record.food.gwp, 2)
+            }
 
         return jsonify({'food_records': food_records, 'total_co2': totalco2})
     else:
@@ -244,23 +248,44 @@ def user_records():
 def record_details(record_id):
 
     record = Record.query.get(record_id)
-    # record_totalco2 = record.total_co2
+    record_totalco2 = record.total_co2
     print('record_totalco2', record_totalco2)
 
     food_item_objs = Food_record.query.filter(
         Food_record.record_id == record_id).all()
 
-    food_records = []
-    food_item_objs = Food_record.query.filter(
+    food_records = {}
+    food_record_objs = Food_record.query.filter(
         Food_record.record == record).all()
 
-    for item in food_item_objs:
-        food_records.append({
-            'food_id': item.food_id, 'qty': item.qty, 'co2_output': round(item.qty*item.food.gwp, 2)})
+    for food_record in food_record_objs:
+        food_records[food_record.item_id] = {
+            # 'item_id': food_record.item_id,
+            'food_id': food_record.food_id,
+            'qty': food_record.qty,
+            'co2_output': round(food_record.qty*food_record.food.gwp, 2)
+        }
+        # food_records.append({
+        #     'item_id': food_record.item_id,
+        #     'food_id': food_record.food_id,
+        #     'qty': food_record.qty,
+        #     'co2_output': round(food_record.qty*food_record.food.gwp, 2)})
 
-    return jsonify({'food_records': food_records, 'total_co2': record.total_co2})
+    return jsonify({'food_records': food_records, 'total_co2': record_totalco2})
 
     # return render_template('record_details.html', all_items = all_items, record_id = record_id)
+
+
+@app.route('/delete-food-record-id/<int:item_id>')
+def delete_food_item_id(item_id):
+
+    Food_record.query.filter(Food_record.item_id == item_id).delete()
+    db.session.commit()
+
+    return (jsonify({
+        'message': f'so far so good! item_id to delete: {item_id}',
+        'confirmDelete': True
+    }))
 
 
 if __name__ == "__main__":

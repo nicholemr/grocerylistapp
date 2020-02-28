@@ -7,11 +7,12 @@ class FoodForm extends React.Component {
       foodId: "",
       foodQty: "",
       foodCo2: "",
-      listItems: [],
-      total_co2: 0
+      foodRecordDict: null,
+      total_co2: 0,
     }
     this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);   
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleClick = this.handleClick.bind(this)   
   }
 
   componentDidMount() {
@@ -24,13 +25,14 @@ class FoodForm extends React.Component {
                 credentials: 'include'},
             ).then(res=> res.json()
                 ).then((result)=> {
-                  this.setState({ listItems: result.food_records,
+                  this.setState({ foodRecordDict: result.food_records,
                                   total_co2: result.total_co2
                               })
                 },
                 (error) => {console.error(error)})
     }
   }
+
 
   handleChange(event){
     this.setState({
@@ -57,7 +59,7 @@ class FoodForm extends React.Component {
             if (json.message){
               alert(json.message)
             } else {
-              this.setState({ listItems: json.food_records,
+              this.setState({ foodRecordDict: json.food_records,
                                 total_co2: json.total_co2})
           }
       },(error) => {console.error(error)});
@@ -65,25 +67,52 @@ class FoodForm extends React.Component {
       event.preventDefault();      
   }
 
-  createListItems = () => {
-    let listItemsDisplay = [];
-    for (let i in this.state.listItems){
-      listItemsDisplay.push(
+  handleClick(foodRecordId, e){
+
+    let url = `http://localhost:5000/delete-food-record-id/${foodRecordId}`
+        
+        fetch(url,
+                {mode: 'cors',
+                credentials: 'include'},
+            ).then(res=> res.json()
+                ).then((result)=> {
+                  if (result.confirmDelete){
+                    alert(result.message)
+                    let foodRecordDictUpdate = this.state.foodRecordDict;
+                    delete foodRecordDictUpdate[foodRecordId];
+                    this.setState({foodRecordDict: foodRecordDictUpdate})
+                  }
+
+                },
+                (error) => {console.error(error)})
+
+    e.preventDefault();  
+  }
+
+  createfoodRecordDict = () => {
+    let foodRecordDictDisplay = [];
+
+    for (let i in this.state.foodRecordDict){
+      console.log(i)
+      foodRecordDictDisplay.push(
         <tr key={i}>
-          <td>{this.state.listItems[i].food_id} </td>
-          <td>{this.state.listItems[i].qty}</td>
-          <td>{this.state.listItems[i].co2_output} </td>
+          <td>{this.state.foodRecordDict[i].food_id} </td>
+          <td>{this.state.foodRecordDict[i].qty}</td>
+          <td>{this.state.foodRecordDict[i].co2_output} </td>
+          <td><button key={i} onClick={(e) => this.handleClick(i, e)}>DELETE</button></td>
         </tr>
       )
     }
-    return listItemsDisplay;
+    return foodRecordDictDisplay;
   }
 
   render(){
 
+    console.log('this.state.foodRecordDict ', this.state.foodRecordDict)
+
     let display = null;
     
-    if (this.state.listItems.length>0){
+    if (this.state.foodRecordDict){
       display = 
       <table>
         <thead>
@@ -93,7 +122,7 @@ class FoodForm extends React.Component {
           <th>CO2 Output (kg)</th>
         </tr>
         </thead>
-        <tbody>{this.createListItems()}</tbody>
+        <tbody>{this.createfoodRecordDict()}</tbody>
       </table>
     }
 

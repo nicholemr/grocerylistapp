@@ -40,7 +40,7 @@ class FoodForm extends React.Component {
 
 
   handleSubmit(event) {
-    let url = `http://localhost:5000/get-food?foodId=${this.state.foodId}&foodQty=${this.state.foodQty}`;
+    let url = `http://localhost:5000/add-food?foodId=${this.state.foodId}&foodQty=${this.state.foodQty}`;
     
     let formData = {
       'foodId': this.state.foodId,

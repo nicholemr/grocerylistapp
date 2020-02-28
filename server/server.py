@@ -114,7 +114,7 @@ def log_out():
                     'logIn': False})
 
 
-@app.route('/get-food', methods=['POST'])
+@app.route('/add-food', methods=['POST'])
 def get_food_post():
     """
     POST: add food items to grocery list
@@ -244,7 +244,7 @@ def user_records():
 def record_details(record_id):
 
     record = Record.query.get(record_id)
-    record_totalco2 = record.total_co2
+    # record_totalco2 = record.total_co2
     print('record_totalco2', record_totalco2)
 
     food_item_objs = Food_record.query.filter(
@@ -258,7 +258,7 @@ def record_details(record_id):
         food_records.append({
             'food_id': item.food_id, 'qty': item.qty, 'co2_output': round(item.qty*item.food.gwp, 2)})
 
-    return jsonify({'food_records': food_records, 'total_co2': record_totalco2})
+    return jsonify({'food_records': food_records, 'total_co2': record.total_co2})
 
     # return render_template('record_details.html', all_items = all_items, record_id = record_id)
 

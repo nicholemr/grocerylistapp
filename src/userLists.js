@@ -7,6 +7,7 @@ class UserLists extends React.Component{
         this.state = {
             userRecords : [],
             logIn : null,
+            displayRecords: []
         }
         this.handleClick = this.handleClick.bind(this)
     }
@@ -28,12 +29,27 @@ class UserLists extends React.Component{
                 (error) => {console.error(error)})
     }
 
-    handleClick(recordid,e) {
-        alert(recordid)
+    handleClick(clickedRecordid,e) {
+        let displayRecordsUpdate = []
+        
+        if (this.state.displayRecords.includes(clickedRecordid)){
+            displayRecordsUpdate = this.state.displayRecords.filter(
+                function(record){
+                    return record !== clickedRecordid
+                }
+            )
+        } else {
+            displayRecordsUpdate = this.state.displayRecords;
+            displayRecordsUpdate.push(clickedRecordid)
+        }
+
+        this.setState({displayRecords:displayRecordsUpdate})
+     
         e.preventDefault();   
     }
 
     render(){
+        
 
     return (
         // <a id="view-all-lists" href=""> View All Lists </a>
@@ -49,10 +65,12 @@ class UserLists extends React.Component{
                 <tbody>
             {this.state.userRecords.map(list =>(
                 <tr key={list[0]}>
-                    <td >{list[2]}</td>
-                    <td >{list[3]} kg CO2</td>
-                    <td><button onClick={(e) => this.handleClick(list[1], e)}>See List</button></td>
+                    <td>{list[2]}</td>
+                    <td>{list[3]} kg CO2</td>
+                    <td><button id={list[1]} onClick={(e) => this.handleClick(list[1], e)}>See List</button></td>
+                    {this.state.displayRecords.includes(list[1]) && <td id={list[1]}><RecordFoodList recordid={list[1]}/></td>}
                 </tr>
+
             ))}
             </tbody>
             </table>

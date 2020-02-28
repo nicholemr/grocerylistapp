@@ -226,22 +226,18 @@ def create_record_post():
 
 @app.route('/user-records')
 def user_records():
-    if session.get('username'):
-        user_obj = User.query.filter(
-            User.username == session['username']).first()
-        user_records_dict = []
-        record_count = 1
-        for record in user_obj.records:
-            user_records_dict.append(
-                [record.record_id, record.date_created, record.total_co2])
-            # user_records_dict[record_count] = {
-            #     'date_created': record.date_created, 'total_co2': record.total_co2}
-            record_count += 1
-        print(user_records_dict)
-        return jsonify({"login": True, "lists": user_records_dict})
-    else:
-        print("not logged in")
-        return jsonify({"login": False})
+
+    user_obj = User.query.filter(
+        User.username == session['username']).first()
+
+    user_records_list = []
+    record_number = 1
+    for record in user_obj.records:
+        user_records_list.append(
+            [record_number, record.record_id, record.date_created, record.total_co2])
+        record_number += 1
+    print(user_records_list)
+    return jsonify({"login": True, "lists": user_records_list})
 
 
 @app.route('/user-records/<int:record_id>')

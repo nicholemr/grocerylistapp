@@ -94,7 +94,6 @@ class FoodForm extends React.Component {
         </tr>
         </thead>
         <tbody>{this.createListItems()}</tbody>
-        
       </table>
     }
 

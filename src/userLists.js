@@ -1,4 +1,5 @@
 import React from "react";
+import RecordFoodList from './RecordFoodList'
 
 class UserLists extends React.Component{
     constructor(props){
@@ -7,6 +8,7 @@ class UserLists extends React.Component{
             userRecords : [],
             logIn : null,
         }
+        this.handleClick = this.handleClick.bind(this)
     }
 
     componentDidMount() {
@@ -26,6 +28,11 @@ class UserLists extends React.Component{
                 (error) => {console.error(error)})
     }
 
+    handleClick(recordid,e) {
+        alert(recordid)
+        e.preventDefault();   
+    }
+
     render(){
 
     return (
@@ -42,8 +49,9 @@ class UserLists extends React.Component{
                 <tbody>
             {this.state.userRecords.map(list =>(
                 <tr key={list[0]}>
-                    <td >{list[1]}</td>
-                    <td >{list[2]} kg CO2</td>
+                    <td >{list[2]}</td>
+                    <td >{list[3]} kg CO2</td>
+                    <td><button onClick={(e) => this.handleClick(list[1], e)}>See List</button></td>
                 </tr>
             ))}
             </tbody>

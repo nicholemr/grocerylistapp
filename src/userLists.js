@@ -18,7 +18,7 @@ class UserLists extends React.Component{
             ).then(res=> res.json()
                 ).then((result)=> {
                     if (result.login){
-                        this.setState({userRecords: result.lists})
+                        this.setState({userRecords: result.lists.reverse()})
                     } else {
                         alert(result.login)
                     }

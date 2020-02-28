@@ -6,7 +6,6 @@ class RegisterUser extends Component {
         this.state = {
             username : "",
             password : "",
-            logIn : null,
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -18,10 +17,13 @@ class RegisterUser extends Component {
         })
     }
 
+    sendDataToParent = (serverData) => {
+        this.props.loginParentCb(serverData)
+    }
+
     handleSubmit(event){
         let url = "http://localhost:5000/register"
         const formData = {username:this.state.username, password:this.state.password}
-        console.log(formData)
 
         fetch(url, {method: 'POST',
                     mode: 'cors', 
@@ -29,16 +31,17 @@ class RegisterUser extends Component {
                     credentials: 'include',
                     headers:{"Content-Type":"application/json"}} 
             ).then(res=> res.json()
-                ).then((result)=> {
-                    console.log('RegisterUser handleSubmit result: ', result)
-                        this.setState({logIn: true})
-                        alert(result.message)
+                ).then((serverJson)=> {
+                    console.log('RegisterUser handleSubmit result from server: ', serverJson)
+                        this.sendDataToParent(serverJson)
+                        alert(serverJson.message)
                     },(error) => {console.error(error)})
 
         event.preventDefault();
     }
     
     render() { 
+
         return ( 
             <div>
                 <h3>Register</h3>
@@ -67,6 +70,7 @@ class RegisterUser extends Component {
                     </label>
                     <button>Submit</button>
                 </form>
+                
             </div>
             );
         }

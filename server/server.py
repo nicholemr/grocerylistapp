@@ -46,7 +46,7 @@ def register_process():
     if user:
         session['username'] = user.username
         print(user.username)
-        return jsonify({'login': True,
+        return jsonify({'logIn': True,
                         "message": f"{user.username} is already registered!",
                         "username": f"{user.username}"})
     else:
@@ -56,7 +56,7 @@ def register_process():
         db.session.commit()
         print(new_user.username)
         session['username'] = new_user.username
-        return jsonify({'login': True,
+        return jsonify({'logIn': True,
                         "message": f'Welcome {new_user.username}!',
                         "username": f"{new_user.username}"})
 
@@ -110,117 +110,118 @@ def log_out():
     """log out user"""
     session.clear()
     print('logged out!')
-    return jsonify({'message': "you've been successfully logged out"})
+    return jsonify({'message': "you've been successfully logged out",
+                    'logIn': False})
 
 
-@app.route('/get-food', methods=["GET", 'POST'])
+@app.route('/get-food', methods=['POST'])
+def get_food_post():
+    """
+    POST: add food items to grocery list
+    """
+
+    # request is POST if user is logged in and a new grocery lis/record is created
+    food_id = request.get_json()['foodId'].capitalize()
+    qty = request.get_json()['foodQty']
+    check_food_obj = Food.query.filter(
+        Food.food_id.like(f'%{food_id}%')).first()
+
+    # if session.get('record_id') or session.get('total_co2'):
+    if check_food_obj:
+        # if user input matched a food_id instance in Foods
+        record_id = session['record_id']
+        food_id = check_food_obj.food_id
+        item_co2 = round(check_food_obj.gwp * int(qty), 2)
+
+        session['total_co2'] = round(session['total_co2'] + item_co2, 2)
+        totalco2 = session['total_co2']
+
+        record = Record.query.get(record_id)
+        record.update_total_co2(round(totalco2, 2))
+
+        food_record = Food_record(
+            food_id=food_id, qty=qty, record=record)
+
+        db.session.add(food_record)
+        db.session.commit()
+
+        food_records = []
+        food_record_objs = Food_record.query.filter(
+            Food_record.record == record).all()
+
+        for food in food_record_objs:
+            food_records.append({
+                'food_id': food.food_id, 'qty': food.qty, 'co2_output': round(food.qty*food.food.gwp, 2)})
+
+        return jsonify({'food_records': food_records, 'total_co2': totalco2})
+    else:
+        return jsonify({"message": f"{food_id} not found"})
+
+
+@app.route('/get-food', methods=["GET"])
 def get_food():
-    """
-    if POST: add food items to grocery list
-    if GET: queries food info from database
-    """
+    """if GET: queries food info from database"""
+    # request is GET if user is logged in but did not create a new grocery list
+    food_id = request.args.get('foodId').capitalize()
+    qty = request.args.get('foodQty')
+    check_food_obj = Food.query.filter(
+        Food.food_id.like(f'%{food_id}%')).first()
 
-    if request.method == 'POST':
-        # request is POST if user is logged in and a new grocery lis/record is created
-        food_id = request.get_json()['foodId'].capitalize()
-        qty = request.get_json()['foodQty']
-        check_food_obj = Food.query.filter(
-            Food.food_id.like(f'%{food_id}%')).first()
+    if check_food_obj:
+        # if user input matched a food_id instance in Foods
+        # and if a record id has been initiated
+        food_id = check_food_obj.food_id
+        item_co2 = round(check_food_obj.gwp * int(qty), 2)
 
-        if session.get('record_id') or session.get('total_co2'):
-            if check_food_obj:
-                # if user input matched a food_id instance in Foods
-                # and if a record id has been initiated
-
-                food_id = check_food_obj.food_id
-                record_id = session['record_id']
-                item_co2 = check_food_obj.gwp * int(qty)
-                session['total_co2'] = session['total_co2'] + item_co2
-                totalco2 = session['total_co2']
-                record = Record.query.get(record_id)
-                record.update_total_co2(round(totalco2, 2))
-
-                list_item = Food_record(
-                    food_id=food_id, qty=qty, record=record)
-                db.session.add(list_item)
-                db.session.commit()
-
-                food_records = []
-                list_item_objs = Food_record.query.filter(
-                    Food_record.record == record).all()
-                # print(list_item_objs)
-                for item in list_item_objs:
-                    food_records.append({
-                        'food_id': item.food_id, 'qty': item.qty, 'co2_output': round(item.qty*item.food.gwp, 2)})
-                print(food_records)
-                return jsonify(food_records)
-            else:
-                return jsonify({"message": f"{food_id} not found"})
-
-    if request.method == 'GET':
-        # request is GET if user is logged in but did not create a new grocery list
-        food_id = request.args.get('foodId').capitalize()
-        qty = request.args.get('foodQty')
-        check_food_obj = Food.query.filter(
-            Food.food_id.like(f'%{food_id}%')).first()
-
-        if check_food_obj:
-            # if user input matched a food_id instance in Foods
-            # and if a record id has been initiated
-            food_id = check_food_obj.food_id
-            item_co2 = round(check_food_obj.gwp * int(qty), 2)
-
-            return jsonify({"food_id": food_id, "qty": qty, "item_co2": item_co2,
-                            'message': 'need to create new list',
-                            "found_foodid": True})
-        else:
-            return jsonify({"message": f"{food_id} not found"})
+        return jsonify({"food_id": food_id, "qty": qty, "item_co2": item_co2,
+                        'message': 'need to create new list',
+                        "found_foodid": True})
+    else:
+        return jsonify({"message": f"{food_id} not found"})
 
 
-@app.route('/create-record')
+@app.route('/create-record', methods=['GET'])
 def create_record():
     """if user is logged in, add list record into records table
     takes in total_co2 calculated, user_id, date_created
     """
+    if session.get('record_id'):
 
-    if session.get('username'):
-        # if the user is logged in, create new grocery list Record
-        sf_tz = pytz.timezone('US/Pacific')
+        record_id = session['record_id']
+        record_obj = Record.query.filter(
+            Record.record_id == record_id).first()
+        total_co2 = round(session['total_co2'], 2)
+        return jsonify({'recordid': record_id,
+                        'total_co2': total_co2})
 
-        date = datetime.now(sf_tz).strftime("%d %b %y, %H:%M:%S")
-        username = session['username']
-        user_id = User.query.filter(User.username == username).first().user_id
+    return jsonify({'recordid': False})
 
-        if session.get('record_id'):
 
-            record_id = session['record_id']
-            record_obj = Record.query.filter(
-                Record.record_id == record_id).first()
-            # total_co2 = session['total_co2']
-            # updated record_obj with new total_co2 value
-            print(f'recordid already in session, {record_id}')
-        else:
-            # if record_id not in session, create one and add it to session and records table
-            initial_co2 = 0
-            # record_obj = Record(
-            #     user_id=user_id, total_co2=initial_co2)
-            record_obj = Record(
-                user_id=user_id, date_created=date, total_co2=initial_co2)
-            db.session.add(record_obj)
-            db.session.commit()
-            session['record_id'] = record_obj.record_id
-            record_id = session['record_id']
-            session['total_co2'] = initial_co2
-            print(f'new recordid created, {record_id}')
+@app.route('/create-record', methods=['POST'])
+def create_record_post():
+    """if user is logged in, add list record into records table
+    takes in total_co2 calculated, user_id, date_created
+    """
 
-        food_records = Food_record.query.filter(
-            Food_record.record_id == record_obj.record_id).all()
+    sf_tz = pytz.timezone('US/Pacific')
+    date = datetime.now(sf_tz).strftime("%d %b %y, %H:%M:%S")
+    username = session['username']
+    user_id = User.query.filter(User.username == username).first().user_id
 
-        return jsonify({'recordid': record_id})
-        # return render_template('create_list.html', date=date, record_obj=record_obj, food_records=food_records, total_co2=session['total_co2'], username = session['username'])
-    else:
-        print('please log in')
-        return jsonify({'message': 'please log in'})
+    initial_co2 = 0
+
+    record_obj = Record(
+        user_id=user_id, date_created=date, total_co2=initial_co2)
+    db.session.add(record_obj)
+    db.session.commit()
+
+    record_id = record_obj.record_id
+    session['record_id'] = record_id
+    session['total_co2'] = initial_co2
+
+    print(f'new recordid created, {record_id}')
+
+    return jsonify({'recordid': record_id})
 
 
 @app.route('/user-records')
@@ -245,19 +246,23 @@ def user_records():
 
 @app.route('/user-records/<int:record_id>')
 def record_details(record_id):
-    record_id = record_id
+
     record = Record.query.get(record_id)
-    list_item_objs = Food_record.query.filter(
+    record_totalco2 = record.total_co2
+    print('record_totalco2', record_totalco2)
+
+    food_item_objs = Food_record.query.filter(
         Food_record.record_id == record_id).all()
-    food_records = {}
-    list_item_objs = Food_record.query.filter(
+
+    food_records = []
+    food_item_objs = Food_record.query.filter(
         Food_record.record == record).all()
-    item_count = 1
-    for item in list_item_objs:
-        food_records[item_count] = {
-            'food_id': item.food_id, 'qty': item.qty, 'co2 output': item.qty*item.food.gwp}
-        item_count += 1
-    return jsonify(food_records)
+
+    for item in food_item_objs:
+        food_records.append({
+            'food_id': item.food_id, 'qty': item.qty, 'co2_output': round(item.qty*item.food.gwp, 2)})
+
+    return jsonify({'food_records': food_records, 'total_co2': record_totalco2})
 
     # return render_template('record_details.html', all_items = all_items, record_id = record_id)
 

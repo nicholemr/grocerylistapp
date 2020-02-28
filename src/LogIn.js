@@ -1,7 +1,7 @@
 import React from "react";
 import LogOut from "./LogOut"
 import RegisterUser from "./RegisterUser"
-import UserLIsts from "./userLists"
+// import UserLIsts from "./userLists"
 import CreateNewList from "./CreateNewList"
 
 class LogIn extends React.Component {
@@ -39,6 +39,13 @@ class LogIn extends React.Component {
         })
     }
 
+    logInChildrenCb = (loginStatus) => {
+        this.setState({
+            username : loginStatus.username,
+            logIn : loginStatus.logIn
+        })
+    }
+
     handleSubmit(event){
         let url = "http://localhost:5000/login"
         const formData = {username:this.state.username, password:this.state.password}
@@ -53,7 +60,6 @@ class LogIn extends React.Component {
                     console.log('LogIn handleSubmit result: ', result)
                     if (result.login){
                         this.setState({logIn: true})
-                        alert(result.message)
                     } else {
                         alert(result.message)
                     }
@@ -63,6 +69,7 @@ class LogIn extends React.Component {
     }
     
     render(){
+        
         if (!this.state.logIn){
             return (
                     <div className="login-form" >
@@ -92,15 +99,20 @@ class LogIn extends React.Component {
                             </label>
                             <button>Log In</button>
                         </form>
-                        <RegisterUser />
+                        <RegisterUser loginParentCb = {this.logInChildrenCb} />
                     </div>
             );
         } else {
             return (
             <div>
-                <LogOut/>
-                <CreateNewList/>
-                <UserLIsts username={this.state.username}/>
+                
+                <LogOut loginParentCb = {this.logInChildrenCb}
+                    logIn = {this.state.logIn}
+                />
+                <h1>Hello {this.state.username} ! </h1>
+                <CreateNewList username = {this.state.username} />
+                {/* <UserLIsts username={this.state.username}/> */}
+                
             </div>
             )
         }

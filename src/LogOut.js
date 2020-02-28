@@ -2,7 +2,16 @@ import React, { Component } from 'react';
 class LogOut extends Component {
     constructor(props) {
         super(props);
-        this.state = {  }
+        this.handleClick = this.handleClick.bind(this)
+         
+    }
+
+    sendDataToParent = (serverLogIn) => {
+        let data = {
+                    username : "",
+                    logIn : serverLogIn
+        }
+        this.props.loginParentCb(data)
     }
 
     handleClick(event) {
@@ -11,15 +20,17 @@ class LogOut extends Component {
                     mode:'cors',
                     credentials: 'include',
                     })
-      .then(res => res.json())
-      .then(json => {
-          alert(json.message)
-        },(error) => {console.error(error)});
+      .then(res => res.json()
+            ).then((json) => {
+                this.sendDataToParent(json.logIn)
+                alert(json.message)
+                },(error) => {console.error(error)});
         
         event.preventDefault();   
     }
 
     render() { 
+
         return ( 
         <div>
         <button onClick={this.handleClick}>

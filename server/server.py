@@ -3,25 +3,28 @@ from food_model import db, connect_to_db, Food, Food_record, Record, User
 from datetime import datetime
 import pytz
 from flask_cors import CORS
+import trie
 
 app = Flask(__name__)
 app.secret_key = 'SOMEKEY'
 CORS(app, supports_credentials=True)
 
 
-@app.route('/')
-def homepage():
-    print("homepage")
+# @app.route('/')
+# def homepage():
 
-    foods = Food.query.all()
-    foods_list = []
-    for food in foods:
-        foods_list.append(food.food_id)
 
-    if session.get('username'):
-        user = User.query.filter(User.username == session['username']).first()
+# print("homepage")
 
-    return jsonify({'foods': foods_list})
+#  foods = Food.query.all()
+#   foods_list = []
+#    for food in foods:
+#         foods_list.append(food.food_id)
+
+#     if session.get('username'):
+#         user = User.query.filter(User.username == session['username']).first()
+
+#     return jsonify({'foods': foods_list})
 
 
 # @app.route('/register', methods=["GET"])
@@ -121,7 +124,7 @@ def get_food_post():
     """
 
     # request is POST if user is logged in and a new grocery lis/record is created
-    food_id = request.get_json()['foodId'].capitalize()
+    food_id = request.get_json()['foodId'].title()
     qty = request.get_json()['foodQty']
     check_food_obj = Food.query.filter(
         Food.food_id.like(f'%{food_id}%')).first()
@@ -131,33 +134,34 @@ def get_food_post():
         # if user input matched a food_id instance in Foods
         record_id = session['record_id']
         food_id = check_food_obj.food_id
-        item_co2 = round(check_food_obj.gwp * int(qty), 2)
 
-        session['total_co2'] = round(session['total_co2'] + item_co2, 2)
-        totalco2 = session['total_co2']
+        check_if_repeated = Food_record.query.filter(
+            Food_record.food_id == check_food_obj.food_id,
+            Food_record.record_id == record_id).all()
 
-        record = Record.query.get(record_id)
-        record.update_total_co2(round(totalco2, 2))
+        if len(check_if_repeated) > 0:
+            return jsonify({"message": f"{food_id} is already in the list"})
+        else:
 
-        food_record = Food_record(
-            food_id=food_id, qty=qty, record=record)
+            # update total_co2 value in current record_id
+            record = Record.query.get(record_id)
+            # create new Food_record instance in food_records table
+            food_record = Food_record(
+                food_id=food_id, qty=qty, record=record, checked=False)
 
-        db.session.add(food_record)
-        db.session.commit()
+            # update total co2 attribute in corresponding record
+            item_co2 = check_food_obj.calc_item_total_co2(qty)
+            record.update_total_co2(item_co2)
 
-        food_records = {}
-        food_record_objs = Food_record.query.filter(
-            Food_record.record == record).all()
+            db.session.add(food_record)
+            db.session.commit()
 
-        for food_record in food_record_objs:
-            food_records[food_record.item_id] = {
-                # 'item_id': food_record.item_id,
-                'food_id': food_record.food_id,
-                'qty': food_record.qty,
-                'co2_output': round(food_record.qty*food_record.food.gwp, 2)
-            }
+            session['total_co2'] = record.total_co2
 
-        return jsonify({'food_records': food_records, 'total_co2': totalco2})
+            # create dictionary with all food_instances in current record
+            food_records = record.get_all_foods_in_record()
+
+            return jsonify({'food_records': food_records, 'total_co2': record.total_co2})
     else:
         return jsonify({"message": f"{food_id} not found"})
 
@@ -207,25 +211,31 @@ def create_record_post():
     takes in total_co2 calculated, user_id, date_created
     """
 
-    sf_tz = pytz.timezone('US/Pacific')
-    date = datetime.now(sf_tz).strftime("%d %b %y, %H:%M:%S")
-    username = session['username']
-    user_id = User.query.filter(User.username == username).first().user_id
+    if session.get('record_id'):
 
-    initial_co2 = 0
+        record_id = session['record_id']
+        record_obj = Record.query.filter(
+            Record.record_id == record_id).first()
 
-    record_obj = Record(
-        user_id=user_id, date_created=date, total_co2=initial_co2)
-    db.session.add(record_obj)
-    db.session.commit()
+    else:
+        # initializing new record if none in session
+        sf_tz = pytz.timezone('US/Pacific')
+        date = datetime.now(sf_tz).strftime("%d %b %y, %H:%M:%S")
+        username = session['username']
+        user_id = User.query.filter(User.username == username).first().user_id
 
-    record_id = record_obj.record_id
-    session['record_id'] = record_id
-    session['total_co2'] = initial_co2
+        record_obj = Record(
+            user_id=user_id, date_created=date, total_co2=0)
+        db.session.add(record_obj)
+        db.session.commit()
 
-    print(f'new recordid created, {record_id}')
+        record_obj.copy_from_last_record()
 
-    return jsonify({'recordid': record_id})
+        session['record_id'] = record_obj.record_id
+        session['total_co2'] = 0
+
+    return jsonify({'recordid': record_obj.record_id,
+                    'total_co2': record_obj.total_co2})
 
 
 @app.route('/user-records')
@@ -234,14 +244,14 @@ def user_records():
     user_obj = User.query.filter(
         User.username == session['username']).first()
 
-    user_records_list = []
-    record_number = 1
+    user_records_dict = {}
+
     for record in user_obj.records:
-        user_records_list.append(
-            [record_number, record.record_id, record.date_created, record.total_co2])
-        record_number += 1
-    print(user_records_list)
-    return jsonify({"login": True, "lists": user_records_list})
+        user_records_dict[record.record_id] = {
+            'date_created': record.date_created,
+            'total_co2': record.total_co2}
+
+    return jsonify({"login": True, "record_dict": user_records_dict})
 
 
 @app.route('/user-records/<int:record_id>')
@@ -249,43 +259,134 @@ def record_details(record_id):
 
     record = Record.query.get(record_id)
     record_totalco2 = record.total_co2
-    print('record_totalco2', record_totalco2)
-
-    food_item_objs = Food_record.query.filter(
-        Food_record.record_id == record_id).all()
 
     food_records = {}
-    food_record_objs = Food_record.query.filter(
-        Food_record.record == record).all()
 
-    for food_record in food_record_objs:
+    for food_record in record.food_records:
         food_records[food_record.item_id] = {
-            # 'item_id': food_record.item_id,
             'food_id': food_record.food_id,
             'qty': food_record.qty,
-            'co2_output': round(food_record.qty*food_record.food.gwp, 2)
+            'co2_output': food_record.calc_item_total_co2(food_record.qty),
+            'foodCheck': food_record.checked
         }
-        # food_records.append({
-        #     'item_id': food_record.item_id,
-        #     'food_id': food_record.food_id,
-        #     'qty': food_record.qty,
-        #     'co2_output': round(food_record.qty*food_record.food.gwp, 2)})
 
     return jsonify({'food_records': food_records, 'total_co2': record_totalco2})
-
-    # return render_template('record_details.html', all_items = all_items, record_id = record_id)
 
 
 @app.route('/delete-food-record-id/<int:item_id>')
 def delete_food_item_id(item_id):
+    """deletes food_record instance from Food_records table"""
+
+    # calculate total co2 of item (item_co2/kg * qty)
+    food_record_obj = Food_record.query.filter(
+        Food_record.item_id == item_id).first()
+
+    foodid_co2 = food_record_obj.calc_item_total_co2(food_record_obj.qty)
+
+    food_record_obj.record.update_total_co2(foodid_co2*-1)
 
     Food_record.query.filter(Food_record.item_id == item_id).delete()
     db.session.commit()
 
+    session['total_co2'] = food_record_obj.record.total_co2
+
+    food_records = food_record_obj.record.get_all_foods_in_record()
+
     return (jsonify({
-        'message': f'so far so good! item_id to delete: {item_id}',
-        'confirmDelete': True
+        'message': f' Deleted {food_record_obj.food_id} from grocery list',
+        'confirmDelete': True,
+        'food_records': food_records,
+        'total_co2': session['total_co2']
     }))
+
+
+@app.route('/update-food-record-id/<int:item_id>')
+def update_food_item_id(item_id):
+    """modifies food_record instance quantity from Food_records table"""
+
+    updated_qty = float(request.args.get('updatedQty'))
+
+    # get food instance from db and modify qty attribute
+    food_record = Food_record.query.get(item_id)
+    prev_qty = food_record.qty
+    food_record.update_qty(updated_qty)
+
+    prev_item_co2 = food_record.calc_item_total_co2(prev_qty)
+    new_item_co2 = food_record.calc_item_total_co2(updated_qty)
+
+    # update total_co2 in session and in record
+    food_record.record.update_total_co2(prev_item_co2*-1)
+    food_record.record.update_total_co2(new_item_co2)
+    db.session.commit()
+
+    session['total_co2'] = food_record.record.total_co2
+    total_co2 = session['total_co2']
+
+    food_records = food_record.record.get_all_foods_in_record()
+
+    return (jsonify({
+        'message': f'updated {food_record.food_id} to {updated_qty} kgs. total co2 {total_co2} ',
+        'confirmUpdate': True,
+        'total_co2': total_co2,
+        "food_records": food_records,
+        'updated_item_co2': new_item_co2
+    }))
+
+
+@app.route('/delete-record-id/<int:record_id>')
+def delete_record_id(record_id):
+    """deletes record instance from Records table"""
+
+    record_obj = Record.query.get(record_id)
+    foods_in_record = record_obj.food_records
+
+    print(foods_in_record)
+    delete_food_records = Food_record.__table__.delete().where(
+        Food_record.record_id == record_id)
+
+    delete_records = Record.__table__.delete().where(
+        Record.record_id == record_id)
+
+    db.session.execute(delete_food_records)
+    # db.session.commit()
+
+    db.session.execute(delete_records)
+    db.session.commit()
+
+    return (jsonify({
+        'message': f'record_id deleted: {record_id}',
+        'confirmDelete': True,
+    }))
+
+
+@app.route('/update-food-boolean/<int:item_id>',  methods=["POST"])
+def update_food_boolean(item_id):
+    """modifies food_record instance boolean from Food_records table"""
+
+    # checked_input = request.args.get('foodCheck')
+    checked_input = request.get_json()['foodCheck']
+    print(checked_input, type(checked_input))
+
+    # get food instance from db and modify boolean attribute
+    food_record = Food_record.query.get(item_id)
+
+    food_record.checked = checked_input
+    # update total_co2 in session and in record
+    db.session.commit()
+
+    return (jsonify({
+        'confirmUpdate': True,
+    }))
+
+
+@app.route('/autocomplete')
+def autocomplete():
+
+    prefix = request.args.get('prefix')
+
+    results = trie.food_trie.prefix_check(prefix.capitalize())
+    print(results)
+    return jsonify({'results': results})
 
 
 if __name__ == "__main__":

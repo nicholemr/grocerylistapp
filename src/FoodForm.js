@@ -1,4 +1,6 @@
 import React from "react";
+import FoodsList from './FoodsList'
+import ProgressBarParent from './ProgressBarParent'
 
 class FoodForm extends React.Component {
   constructor(props){
@@ -6,18 +8,18 @@ class FoodForm extends React.Component {
     this.state = {
       foodId: "",
       foodQty: "",
-      foodCo2: "",
       foodRecordDict: null,
       total_co2: 0,
+      suggestions: "",
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleClick = this.handleClick.bind(this)   
+    this.handleAutocompleteChange = this.handleAutocompleteChange.bind(this);
+     
   }
 
   componentDidMount() {
     if (this.props.recordid){
-        // console.log(typeof this.props.recordid)
       let url = `http://localhost:5000/user-records/${this.props.recordid}`
         
         fetch(url,
@@ -26,13 +28,12 @@ class FoodForm extends React.Component {
             ).then(res=> res.json()
                 ).then((result)=> {
                   this.setState({ foodRecordDict: result.food_records,
-                                  total_co2: result.total_co2
+                                    total_co2: result.total_co2
                               })
                 },
                 (error) => {console.error(error)})
     }
   }
-
 
   handleChange(event){
     this.setState({
@@ -40,10 +41,8 @@ class FoodForm extends React.Component {
     })
   }
 
-
   handleSubmit(event) {
-    let url = `http://localhost:5000/add-food?foodId=${this.state.foodId}&foodQty=${this.state.foodQty}`;
-    
+    let url = `http://localhost:5000/add-food`;
     let formData = {
       'foodId': this.state.foodId,
       'foodQty': this.state.foodQty
@@ -67,83 +66,87 @@ class FoodForm extends React.Component {
       event.preventDefault();      
   }
 
-  handleClick(foodRecordId, e){
+  handleAutocompleteChange(event){
+    this.setState({
+        foodId: event.target.value,
+    })
 
-    let url = `http://localhost:5000/delete-food-record-id/${foodRecordId}`
-        
-        fetch(url,
-                {mode: 'cors',
-                credentials: 'include'},
-            ).then(res=> res.json()
-                ).then((result)=> {
-                  if (result.confirmDelete){
-                    alert(result.message)
-                    let foodRecordDictUpdate = this.state.foodRecordDict;
-                    delete foodRecordDictUpdate[foodRecordId];
-                    this.setState({foodRecordDict: foodRecordDictUpdate})
-                  }
+    let url = `http://localhost:5000/autocomplete?prefix=${event.target.value}`;
 
-                },
-                (error) => {console.error(error)})
+    fetch(url, {method: 'GET',
+              mode:'cors',
+              credentials: 'include',
+              headers:{"Content-Type":"application/json"} })
+      .then(res => res.json())
+        .then(json => {
+            this.setState({ suggestions: json.results,
+            }) 
+            console.log(json.results)
+        //     if (json.message){
+        //       alert(json.message)
+        //     } else {
+        //   }
+      },(error) => {console.error(error)});
 
-    e.preventDefault();  
-  }
-
-  createfoodRecordDict = () => {
-    let foodRecordDictDisplay = [];
-
-    for (let i in this.state.foodRecordDict){
-      console.log(i)
-      foodRecordDictDisplay.push(
-        <tr key={i}>
-          <td>{this.state.foodRecordDict[i].food_id} </td>
-          <td>{this.state.foodRecordDict[i].qty}</td>
-          <td>{this.state.foodRecordDict[i].co2_output} </td>
-          <td><button key={i} onClick={(e) => this.handleClick(i, e)}>DELETE</button></td>
-        </tr>
-      )
     }
-    return foodRecordDictDisplay;
+
+  suggestionSelected (value) {
+    this.setState({
+      foodId: value,
+      suggestions: ""
+    })
   }
+
+  displayResults = () => {
+    let suggestionsList = [];
+
+    for (let food of this.state.suggestions){
+      suggestionsList.push(<li key={food} onClick={()=>this.suggestionSelected(food)}>{food}</li>)
+    }
+
+    return suggestionsList;
+  }
+
+  foodDictchildrenCB = (updated_foodRecordDict, updated_total_co2) => {
+    
+    if (updated_foodRecordDict){
+      this.setState({
+        foodRecordDict : updated_foodRecordDict,
+        total_co2: updated_total_co2
+      })
+    } else {
+      this.setState({
+        total_co2: updated_total_co2
+      })
+    }
+    
+  }
+
+
 
   render(){
 
-    console.log('this.state.foodRecordDict ', this.state.foodRecordDict)
-
-    let display = null;
-    
-    if (this.state.foodRecordDict){
-      display = 
-      <table>
-        <thead>
-        <tr>
-          <th>Food ID</th>
-          <th>Quantity (kg)</th>
-          <th>CO2 Output (kg)</th>
-        </tr>
-        </thead>
-        <tbody>{this.createfoodRecordDict()}</tbody>
-      </table>
-    }
-
     return (
-      <div className="search-food">
+      <div >
+        <ProgressBarParent total_co2={this.state.total_co2} />
         <h2>Add Items to Grocery List</h2>
-        <h3>Your total CO2 Output for this list is {this.state.total_co2} kg</h3>
-        
-        <form onSubmit={this.handleSubmit}>
-          <label htmlFor="food_id">
+        <form className="search-food" onSubmit={this.handleSubmit}>
+          <label htmlFor="foodId">
             Food ID:
             <input
               id="foodId"
               name="foodId"
               value={this.state.foodId}
               placeholder="Enter Food ID"
-              onChange={this.handleChange}
+              onChange={this.handleAutocompleteChange}
             />
+            <ul >
+              {this.displayResults()}
+            </ul>
           </label>
+          
           <span></span>
-          <label htmlFor="food_qty">
+          <label htmlFor="foodQty">
             Quantity (kg):
             <input
               id="foodQty"
@@ -158,7 +161,7 @@ class FoodForm extends React.Component {
           
         </form>
         
-        {display}
+        <FoodsList foodDictParentCB={this.foodDictchildrenCB} {...this.state.foodRecordDict} total_co2={this.state.total_co2} />
         
       </div>
     );

@@ -23,7 +23,6 @@ class LogOut extends Component {
       .then(res => res.json()
             ).then((json) => {
                 this.sendDataToParent(json.logIn)
-                alert(json.message)
                 },(error) => {console.error(error)});
         
         event.preventDefault();   

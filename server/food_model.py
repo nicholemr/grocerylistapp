@@ -27,6 +27,10 @@ class Food(db.Model):
     food_id = db.Column(db.String(100), primary_key=True,)
     gwp = db.Column(db.Float, nullable=False,)
 
+    def calc_item_total_co2(self, qty):
+        qty = float(qty)
+        return round(qty * self.gwp, 2)
+
     def __repr__(self):
         """show info about a Food instance"""
         return f'<Food = {self.food_id}>'
@@ -40,7 +44,8 @@ class Food_record(db.Model):
                         db.ForeignKey('foods.food_id'), nullable=False,)
     qty = db.Column(db.Float, nullable=False,)
     record_id = db.Column(db.Integer,
-                          db.ForeignKey('records.record_id'), nullable=True)
+                          db.ForeignKey('records.record_id'), nullable=False)
+    checked = db.Column(db.Boolean, nullable=False)
 
     food = db.relationship("Food",
                            backref=db.backref("food_records"))
@@ -48,9 +53,17 @@ class Food_record(db.Model):
     record = db.relationship("Record",
                              backref=db.backref("food_records"))
 
+    def update_qty(self, qty):
+        qty = float(qty)
+        self.qty = qty
+
+    def calc_item_total_co2(self, qty):
+        qty = float(qty)
+        return round(qty * self.food.gwp, 2)
+
     def __repr__(self):
         """show info about a List_item instance"""
-        return f'<List item_id={self.item_id} food ={self.food_id}>'
+        return f'<Food_record record_id={self.record_id} food ={self.food_id}>'
 
 
 class Record(db.Model):
@@ -66,8 +79,46 @@ class Record(db.Model):
     user = db.relationship("User",
                            backref=db.backref("records"))
 
-    def update_total_co2(self, co2):
-        self.total_co2 = co2
+    def update_total_co2(self, item_co2):
+        item_co2 = float(item_co2)
+        self.total_co2 = round(self.total_co2 + item_co2, 2)
+
+    def get_all_foods_in_record(self):
+
+        food_records = {}
+
+        for food_record in self.food_records:
+            food_records[food_record.item_id] = {
+                'food_id': food_record.food_id,
+                'qty': food_record.qty,
+                'co2_output': food_record.calc_item_total_co2(food_record.qty)
+            }
+
+        return food_records
+
+    def copy_from_last_record(self):
+
+        past_records = Record.query.filter(
+            Record.user_id == self.user_id).all()
+
+        if len(past_records) > 1:
+
+            max_num = 0
+            past_record = None
+            for record in past_records:
+                if record.record_id == self.record_id:
+                    continue
+                elif int(record.record_id) > max_num:
+                    past_record = record
+                    max_num = int(record.record_id)
+
+            for food in past_record.food_records:
+                copy_food = Food_record(
+                    food_id=food.food_id, qty=food.qty, record=self, checked=food.checked)
+                food_co2 = food.calc_item_total_co2(food.qty)
+                self.update_total_co2(food_co2)
+                db.session.add(copy_food)
+                db.session.commit()
 
     def __repr__(self):
         """show info about a Record instance"""

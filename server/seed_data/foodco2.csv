@@ -1,134 +1,140 @@
 ﻿Name ,Med
-Onion,0.17
-Celery,0.18
-Potatoes,0.18
-Carrots,0.20
-Zucchini/button squash,0.21
-Cucumber/gherkins ,0.23
-Beetroot,0.24
-Pumpkins ,0.25
-Rockmelon/cantelope,0.25
-Beans: plake,0.26
-Lemons and limes,0.26
-Mushrooms,0.27
-Guavas,0.28
-Apples,0.29
-Swedes/rutabage,0.29
-Pears,0.31
-Quinces,0.31
-Beans: green,0.31
-Watermelons,0.32
-Dates,0.32
-Orange,0.33
-Kiwi fruit,0.36
-Cauliflowers and broccoli,0.36
-Grapes,0.37
-Oats,0.38
-Rye,0.38
-Peas,0.38
-Cherries,0.39
-Beans: gigante/butter,0.39
-Almond/coconut milk,0.42
-Peaches and Nectarines,0.43
-Figs,0.43
-Barley,0.43
-Apricot,0.43
-Chestnuts,0.43
-Beans,0.43
-Mandarin,0.45
-Tomatoes,0.45
-Maize/corn,0.47
-Fennel,0.48
-Artichokes,0.48
-Cowpeas,0.49
-Soybean,0.49
-Pineapples,0.50
-Melons,0.51
-Grapefruit and pomelo,0.51
-Tangerines/mandarins,0.51
-Tomatoes,0.51
-Wheat,0.52
-Spinach,0.54
-Garlic,0.57
-Strawberries,0.58
-Broccoli,0.60
-Olives,0.63
-Capsicums/peppers,0.66
-Beans: pinto,0.73
-Soy-milk,0.75
-Beans: french and runner,0.75
-Chickpeas,0.77
-Asparagus,0.83
-Peanuts,0.83
-Raspberries,0.84
-Currants and gooseberries,0.84
-Sesame seed,0.88
-Ginger,0.88
-Cranberries/blueberries,0.92
-Hazelnuts,0.97
-Ground nuts,0.99
-Lentils,1.03
-Pilchard,1.10
-Peppers,1.10
-Quinoa,1.15
-Herring,1.16
-Milk,1.29
-Avocados,1.30
-Yoghurt,1.31
-Eggplants,1.35
-Sunflower seed,1.41
-Melons,1.43
-Cashew nut,1.44
-Walnuts,1.51
-Pistachios,1.53
+Almond Milk,0.42
 Almonds,1.54
-Pollock,1.60
-Strawberries,1.64
-Carp,1.76
-Zucchini,1.77
-Mackerel,1.80
-Rape and mustard seed,2.09
-Cucumbers and gherkins,2.10
-Tuna,2.15
-Tomatoes,2.20
-Rice,2.55
-Whiting,2.66
-Duck,3.09
-Sea bass,3.27
-Haddock,3.41
-Eggs,3.46
-Salmon,3.47
-Fish,3.49
-Cod,3.51
-Buffalo milk,3.57
-Chicken,3.65
-Lettuce,3.70
-Eel,3.88
-Kangaroo,4.10
-Trout,4.20
-Rabbit,4.70
-Cream,5.64
-Pork,5.77
-Ling common,6.45
-Pomfret,6.63
-Rock fish,6.94
-Octopus/squid/cuttlefish,7.13
-Turkey,7.17
-Prawns/shrimp,7.80
-Diamond fish,8.33
-Rhombus,8.41
-Cheese ,8.55
-Butter ,9.25
-Mussels ,9.51
-Hake ,9.77
-Porbeagle ,11.44
-Shark mako ,11.50
 Anglerfish ,12.29
-Swordfish ,12.84
-Megrim ,14.15
-Turbot ,14.51
-Sole ,20.86
-Lamb,25.58
+Apples,0.29
+Apricot,0.43
+Artichokes,0.48
+Asparagus,0.83
+Avocados,1.3
+Barley,0.43
+Beans,0.43
 Beef,26.61
-Lobster ,27.80
+Beetroot,0.24
+Blueberries,0.92
+Broccoli,0.6
 Buffalo ,60.43
+Buffalo milk,3.57
+Butter ,9.25
+Button squash,0.21
+Cantelope,0.25
+Carp,1.76
+Carrots,0.2
+Cashew nut,1.44
+Cauliflowers,0.36
+Celery,0.18
+Cheese ,8.55
+Cherries,0.39
+Chestnuts,0.43
+Chicken,3.65
+Chickpeas,0.77
+Coconut milk,0.42
+Cod,3.51
+Corn,0.47
+Cowpeas,0.49
+Cranberries,0.92
+Cream,5.64
+Cucumber,0.23
+Currants,0.84
+Cuttlefish,7.13
+Dates,0.32
+Diamond fish,8.33
+Duck,3.09
+Eel,3.88
+Eggplants,1.35
+Eggs,3.46
+Fennel,0.48
+Figs,0.43
+Fish,3.49
+French Beans,0.75
+Runner Beans,0.75
+Garlic,0.57
+Gherkins,2.1
+Gigante beans,0.39
+Ginger,0.88
+Gooseberries,0.84
+Grapefruit,0.51
+Grapes,0.37
+Green beans,0.31
+Ground nuts,0.99
+Guavas,0.28
+Haddock,3.41
+Hake ,9.77
+Hazelnuts,0.97
+Herring,1.16
+Kangaroo,4.1
+Kiwi fruit,0.36
+Lamb,25.58
+Lemons,0.26
+Lentils,1.03
+Lettuce,3.7
+Limes,0.26
+Ling,6.45
+Lobster ,27.8
+Mackerel,1.8
+Mandarin,0.45
+Mandarins,0.51
+Megrim ,14.15
+Melons,0.51
+Melons,1.43
+Milk,1.29
+Mushrooms,0.27
+Mussels ,9.51
+Mustard seed,2.09
+Nectarines,0.43
+Oats,0.38
+Octopus,7.13
+Olives,0.63
+Onion,0.17
+Orange,0.33
+Peaches,0.43
+Peanuts,0.83
+Pears,0.31
+Peas,0.38
+Peppers,0.66
+Pilchard,1.1
+Pineapples,0.5
+Pinto Beans,0.73
+Pistachios,1.53
+Plake Beans,0.26
+Pollock,1.6
+Pomelo,0.51
+Pomfret,6.63
+Porbeagle ,11.44
+Pork,5.77
+Potatoes,0.18
+Pumpkins ,0.25
+Quinces,0.31
+Quinoa,1.15
+Rabbit,4.7
+Raspberries,0.84
+Rhombus,8.41
+Rice,2.55
+Rock fish,6.94
+Rutabage,0.29
+Rye,0.38
+Salmon,3.47
+Sea bass,3.27
+Sesame seed,0.88
+Shark mako ,11.5
+Shrimp,7.8
+Sole ,20.86
+Soy-milk,0.75
+Soybean,0.49
+Spinach,0.54
+Squid,7.13
+Strawberries,1.11
+Sunflower seed,1.41
+Swordfish ,12.84
+Tangerines,0.51
+Tomatoes,1.05
+Trout,4.2
+Tuna,2.15
+Turbot ,14.51
+Turkey,7.17
+Walnuts,1.51
+Watermelons,0.32
+Wheat,0.52
+Whiting,2.66
+Yoghurt,1.31
+Zucchini,1.77

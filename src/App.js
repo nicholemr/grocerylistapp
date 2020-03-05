@@ -1,6 +1,7 @@
 import React from 'react';
-// import './App.css';
-import LogIn from "./LogIn"
+import './App.css';
+import LogIn from './LogIn'
+
 
 class App extends React.Component {
   constructor(props) {

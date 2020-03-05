@@ -2,7 +2,8 @@ import React from "react";
 import LogOut from "./LogOut"
 import RegisterUser from "./RegisterUser"
 // import UserLIsts from "./userLists"
-import CreateNewList from "./CreateNewList"
+import GroceryListRecord from "./GroceryListRecord"
+
 
 class LogIn extends React.Component {
     constructor(props){
@@ -13,7 +14,7 @@ class LogIn extends React.Component {
             logIn : null,
         }
         this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);   
+        this.handleLogin = this.handleLogin.bind(this);   
     }
 
     componentDidMount(){
@@ -46,7 +47,7 @@ class LogIn extends React.Component {
         })
     }
 
-    handleSubmit(event){
+    handleLogin(event){
         let url = "http://localhost:5000/login"
         const formData = {username:this.state.username, password:this.state.password}
 
@@ -57,7 +58,7 @@ class LogIn extends React.Component {
                     headers:{"Content-Type":"application/json"}} 
             ).then(res=> res.json()
                 ).then((result)=> {
-                    console.log('LogIn handleSubmit result: ', result)
+                    console.log('LogIn handleLogin result: ', result)
                     if (result.login){
                         this.setState({logIn: true})
                     } else {
@@ -74,7 +75,7 @@ class LogIn extends React.Component {
             return (
                     <div className="login-form" >
                         <h3>Log In</h3>
-                        <form onSubmit={this.handleSubmit}>
+                        <form onSubmit={this.handleLogin}>
                             <label htmlFor="login-username">
                             Username:
                             <input
@@ -110,7 +111,8 @@ class LogIn extends React.Component {
                     logIn = {this.state.logIn}
                 />
                 <h1>Hello {this.state.username} ! </h1>
-                <CreateNewList username = {this.state.username} />
+                
+                <GroceryListRecord username = {this.state.username} />
                 {/* <UserLIsts username={this.state.username}/> */}
                 
             </div>

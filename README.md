@@ -83,3 +83,6 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
 
 ![log-in page](https://github.com/nicholemr/grocerylistapp/blob/master/READme/login.gif)
+
+![adding to list](https://github.com/nicholemr/grocerylistapp/blob/master/READme/addingItems.gif)
+

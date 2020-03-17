@@ -8,6 +8,10 @@ Immediately after user log-in, the user’s grocery list from a previous session
 
 The app also provides search suggestions for the food items available in the database. 
 
+## Technologies
+Python, JavaScript, HTML, CSS, Flask, PostgreSQL, SQLAlchemy, CSS Grid, Flex-box, React-Reveal, React-Spring Animations
+
+## Installation 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

@@ -1,9 +1,14 @@
 import React from "react";
 import LogOut from "./LogOut"
 import RegisterUser from "./RegisterUser"
-// import UserLIsts from "./userLists"
-import GroceryListRecord from "./GroceryListRecord"
 
+import GroceryListRecord from "./GroceryListRecord"
+import Welcome from './styled/WelcomeC'
+import Global from "./styled/Global"
+import Input from './styled/Input'
+import Button from './styled/Button'
+import TreeImg from './TreeImg'
+import TreeImgLogin from './TreeImgLogin'
 
 class LogIn extends React.Component {
     constructor(props){
@@ -73,48 +78,64 @@ class LogIn extends React.Component {
         
         if (!this.state.logIn){
             return (
-                    <div className="login-form" >
-                        <h3>Log In</h3>
-                        <form onSubmit={this.handleLogin}>
-                            <label htmlFor="login-username">
-                            Username:
-                            <input
-                                id="login-username"
-                                type="text"
-                                name="username"
-                                value={this.state.username}
-                                placeholder="Enter Username"
-                                onChange={this.handleChange}
-                            />
-                            </label>
-                            <label htmlFor="login-password">
-                            Password:
-                            <input
-                                id="login-password"
-                                type="password"
-                                name="password"
-                                value={this.state.password}
-                                placeholder="Enter Password"
-                                onChange={this.handleChange}
-                            />
-                            </label>
-                            <button>Log In</button>
-                        </form>
-                        <RegisterUser loginParentCb = {this.logInChildrenCb} />
+                    <div className="login-page" >
+                        <Welcome>Carbon Food-Print Grocery List  </Welcome>
+                        <div className='login-reg'>
+                            <div className='login'>
+                                <h3>   Log In:</h3>
+                                <form onSubmit={this.handleLogin}>
+                                    <label htmlFor="login-username">
+                                    <Input
+                                        id="login-username"
+                                        type="text"
+                                        name="username"
+                                        value={this.state.username}
+                                        placeholder="Enter Username"
+                                        onChange={this.handleChange}
+                                    />
+                                    </label>
+                                    <label htmlFor="login-password">
+                                    <Input
+                                        id="login-password"
+                                        type="password"
+                                        name="password"
+                                        value={this.state.password}
+                                        placeholder="Enter Password"
+                                        onChange={this.handleChange}
+                                    />
+                                    </label>
+                                    <Button>Log In</Button>
+                                </form>
+                            </div>
+                            <RegisterUser loginParentCb = {this.logInChildrenCb} />
+                        </div>
+                        
+                        <TreeImgLogin/>
                     </div>
             );
         } else {
             return (
-            <div>
-                
+            <div className="main">
+                <Global />
+                <div className='belowmain'>
+                <div className="left">
+                <div className='heading'>  
+                    <Welcome>Hello {this.state.username}, </Welcome>
+                    <Welcome>Welcome to your Carbon Food-Print grocery list ! </Welcome>
+                    <br/>
+                    <br/>
+                    <div className='bar-title'>The bar below displays your list's CO<sub>2</sub> emissions 
+                in terms of miles driven by a standard economy car:</div>
+                </div>
                 <LogOut loginParentCb = {this.logInChildrenCb}
                     logIn = {this.state.logIn}
                 />
-                <h1>Hello {this.state.username} ! </h1>
                 
                 <GroceryListRecord username = {this.state.username} />
-                {/* <UserLIsts username={this.state.username}/> */}
-                
+                </div>
+                <TreeImg/>
+                <div className="bottom"></div>
+                </div>
             </div>
             )
         }

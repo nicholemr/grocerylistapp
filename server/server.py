@@ -364,7 +364,7 @@ def update_food_boolean(item_id):
     """modifies food_record instance boolean from Food_records table"""
 
     # checked_input = request.args.get('foodCheck')
-    checked_input = request.get_json()['foodCheck']
+    checked_input = request.get_json()['checked']
     print(checked_input, type(checked_input))
 
     # get food instance from db and modify boolean attribute
@@ -376,6 +376,7 @@ def update_food_boolean(item_id):
 
     return (jsonify({
         'confirmUpdate': True,
+        'total_co2': food_record.record.total_co2,
     }))
 
 
@@ -385,7 +386,6 @@ def autocomplete():
     prefix = request.args.get('prefix')
 
     results = trie.food_trie.prefix_check(prefix.capitalize())
-    print(results)
     return jsonify({'results': results})
 
 

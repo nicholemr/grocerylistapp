@@ -1,62 +1,398 @@
-.progress-bar {
-    position:relative;
-    height: 20px;
-    width: 350px;
-    border-radius: 50px;
-    border: 1px solid #333;
+
+/*  root------------------------------------------------------- */
+.login-page {
+    display: grid;
+    grid-template-rows: 50px 100px auto;
+    justify-items: center;
+    font-family: Roboto;
+    letter-spacing: 1px;
+    color: #804000;
 }
 
+.login-page h1{
+    font-size: 200%;
+}
+
+.login-reg{
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: 80px;
+    margin-top: 40px;
+
+}
+
+login-reg h3{
+    margin-left: 20px;
+
+}
+
+.tree-login img{
+    margin-top: 150px;
+    width: 200px;
+}
+
+.login{
+    display: grid;
+    grid-template-rows: 40px 40px;
+}
+
+.register{
+    display: grid;
+    grid-template-rows: 40px 40px;
+}
+
+
+.belowmain {
+    
+    display: grid;
+    grid-template-columns: auto auto ;
+    grid-template-rows: 6fr 5% ;
+    
+}
+
+.left {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: 1fr 10fr ;
+    align-items: start;
+}
+.right {
+    grid-row-start: span 2;
+    display: grid;
+    align-items: start;
+    justify-items: start;
+}
+.right img{
+    margin-top: 300px;
+    width: 200px;
+    background-color:transparent;
+    
+    background-position: center center;
+    box-shadow: 0px 10px 30px -5px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.5s;
+    will-change: transform;
+    border: 5px solid white;
+}
+.right img:hover{
+    box-shadow: 0px 30px 100px -10px rgba(0, 0, 0, 0.4);
+}
+
+.bottom {
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+
+/* LEFT----------------------------------------------------------------------------------------------------------------------- */
+.heading{
+    margin-left: 50px;
+    font-family: Roboto;
+    color:  #6c3600;
+    /* text-transform: capitalize; */
+}
+
+.bar-title{
+    font-size: 110%;
+}
+
+/* FoodForm-Component ------------------------------------------------------------------------------------ */
+.FoodForm-Component {
+    margin-top: 5px;
+
+    grid-column-start: 1;
+    grid-column-end: 3;
+
+    display: grid;
+    grid-template-rows: 100px 50px auto;
+    grid-row-gap: 30px;
+    align-content: top;
+    justify-content: center;
+
+}
+
+
+/*  co2summary------------------------------------------------------- */
+.co2summary {
+    width: 400px;
+
+    grid-column-start: 1;
+    grid-column-end: 4;
+
+    display: grid;
+    grid-template-rows: 50px 1fr 100px;
+    align-items: bottom;
+}
+
+.total {
+    /* display: grid;
+    justify-content: center; */
+    
+}
+/* progress-bar ---------------------------------------------------- */
+.progress-bar {
+    background-color: transparent;
+
+    position:center;
+    height: 20px;
+    width: 400px;
+    border-radius: 20px;
+    border: 1px solid #8B4513;
+}
 .filler {
-    background: #1DA598;
+    background: rgb(139,69,19);
+    height:100%;
+    /* border-radius: inherit; */
+    border-radius: 20px;
+    transition: width .3s ease-in-out
+}
+
+.filler-red {
+    background: rgb(235, 5, 5);
     height:100%;
     border-radius: inherit;
-    transition: width .2s ease-in
+    transition: width .3s ease-in-out
 }
-.FoodForm-Component {
-    margin: 150px auto 0 auto;
-    width: 600px;
-}
-
-.search-food #foodId {
-    width: 100%;
-    border: 1px solid grey;
-    box-shadow: 0 0 0 1px rgba(0,0,0,.1) 0 2px 4px 1px rgba(0,0,0,.18);
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 14px;
-    color: rgba(0,0,0,.73)
+.co2summary img{
+    width: 70px;
+    
 }
 
+.car {
+    height: 60px;
 
-.search-food input {
-    width: 100%;
-    border: none;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 14px;
-    color: rgba(0,0,0,.73);
-    padding: 10px 5px;
-    box-sizing: border-box;
-    outline: none;
+    transition-property: margin-left;
+    transition-duration: .3s;
+    transition-timing-function: ease-in-out;
+
+    display: grid;
+    align-items: end;
 }
 
-.search-food ul {
-    list-style-type: none;
-    text-align: left;
-    margin: 0;
+.below-bar{
+    display: grid;
+    grid-template-columns: 90% 10%;
+    justify-items: bottom;
+    width: 400px;
+}
+
+.below-bar h5{
+    margin-top:5px;
+    color: #6c3600;
+    width: 90px;
+
+    font-family: Roboto;
+    letter-spacing: 1px;
+    font-size: 90%;
+}
+
+.miles-label {
+    display: grid;
+    grid-template-columns: 100%;
+    justify-items: end;
+    width: 80px;
+
+    font-family: Roboto;
+    letter-spacing: 1px;
+}
+
+/* ---------------------------------------------------------------------------------------------------- */
+/* food-form ------------------------------------------------------------------------ */
+.food-form {
+    grid-column-start: 1;
+    grid-column-end: 4;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 60px;
+    grid-template-rows: 75px;
+    align-items: center;
+    justify-items: center;
+    
+}
+
+.food-form label {
+
+    display: grid;
+    grid-template-rows: 1fr;
+    align-items: start;
+
+    height: 30px;
+}
+
+
+
+.food-form ul {
+    position: relative;
+    list-style: none;
     padding: 0;
-    border-top: 1px solid grey;
+    margin: 0;
+    
+    font-family: Roboto;
+    letter-spacing: 1px;
+    color: #1c5263;
+    font-size: 95%;
+
 }
 
-.search-food ul::before {
+.food-form li {
+    cursor: pointer;
+    background-color: #e6ffff    ;
+    padding: 3px;
+}
+
+.food-form ul::before {
     content: "",
 }
+.food-form li:hover {
+    text-decoration: underline;
+    background-color: #cceeff;
+}
 
 
-.search-food li {
-    padding: 5px 5px;
+/* ---------------------------------------------------------------------------------------------------- */
+
+
+
+
+/* -------------------------------------------------------------------------------- */
+/* food-list  ----------------------------------------------------- */
+.food-list{
+
+    grid-column-start: 1;
+    grid-column-end: 4;
+
+    display: grid;
+    grid-template-columns: repeat(1,1fr);
+    grid-row-gap: 10px;
+    color: #6c3600;
+
+    width: 400px;
+    
+}
+
+.food-list > div {
+    font-size: small;
+    display: grid;
+    grid-template-columns: repeat(6,1fr);
+}
+
+.food-list #five-th{
+    display: grid;
+    justify-content: center;
+}
+
+.food-list #row {
+
+    display: grid;
+    grid-template-columns: 50px 100px 50px 1fr 75px 50px;
+    align-items: center;
+
+    font-size: 90%;;
+    
+
+}
+/* ----------------------- */
+.one{
+    display: grid;
+    justify-content: center;
+
     cursor: pointer;
 }
 
-.search-food li:hover {
-    text-decoration: underline;
-    background-color: rgba(128,128,128,0.2);
+/* ----------------------- */
+.food-list #two{
+    width: 90px;
 }
+
+/* ----------------------- */
+  
+.food-list form {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    align-items: center;
+}
+
+.food-list label {
+    display: grid;
+    grid-template-columns: 80%;
+    place-items: stretch;
+    justify-content: center;
+
+}
+/* ----------------------- */
+
+.food-list #three{
+    display: grid;
+    justify-content: center;
+}
+/* ----------------------- */
+.food-list #four{
+    display: grid;
+    justify-content: left;
+
+    margin-right: 10px;
+}
+/* ----------------------- */
+.food-list #five{
+    display: grid;
+    grid-template-rows: 50%;
+    justify-items: end;
+    align-items: top;
+    /* place-items: center; */
+    
+
+}
+/* ----------------------- */
+.food-list #six{
+    display: grid;
+    justify-content: center;
+}
+
+.food-list #six button{
+    color: #804000;
+    background-color: #e6f3f5;
+    font-size: small;
+    font-weight: 500;
+    border-radius: 8px;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease 0s;
+}
+.food-list #six button:hover{
+    cursor: pointer;
+    color: #e6f3f5;
+    background-color: #804000;
+    font-size: small;
+    font-weight: 500;
+    border-radius: 8px;
+    transform: translateY(-4px);
+}
+/*  ------------------------------------------------------- */
+
+
+.mini-bar {
+    background-color: transparent;
+    margin-top: 3px;
+
+    position:center;
+    height: 3px;
+    width: 100%;
+    border-radius: 20px;
+    border: 1px solid #8B4513;
+}
+.mini-filler {
+    background: rgb(139,69,19);
+    height:100%;
+    border-radius: inherit;
+    transition: width .3s ease-in-out
+}
+
+
+
+/*  ------------------------------------------------------- */
+
+
+
+
+
+
+
+
+

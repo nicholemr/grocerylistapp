@@ -1,6 +1,8 @@
 import React from "react";
 import FoodsList from './FoodsList'
-import ProgressBarParent from './ProgressBarParent'
+import Co2Summary from './Co2Summary'
+import Input from './styled/Input'
+import ButtonAdd from './styled/ButtonAdd'
 
 class FoodForm extends React.Component {
   constructor(props){
@@ -12,7 +14,7 @@ class FoodForm extends React.Component {
       total_co2: 0,
       suggestions: "",
     }
-    this.handleChange = this.handleChange.bind(this);
+    this.handleQtyChange = this.handleQtyChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleAutocompleteChange = this.handleAutocompleteChange.bind(this);
      
@@ -35,7 +37,7 @@ class FoodForm extends React.Component {
     }
   }
 
-  handleChange(event){
+  handleQtyChange(event){
     this.setState({
         [event.target.name]: event.target.value,
     })
@@ -59,7 +61,9 @@ class FoodForm extends React.Component {
               alert(json.message)
             } else {
               this.setState({ foodRecordDict: json.food_records,
-                                total_co2: json.total_co2})
+                                total_co2: json.total_co2,
+                                foodId: "",
+                                foodQty: "",})
           }
       },(error) => {console.error(error)});
 
@@ -79,13 +83,12 @@ class FoodForm extends React.Component {
               headers:{"Content-Type":"application/json"} })
       .then(res => res.json())
         .then(json => {
-            this.setState({ suggestions: json.results,
-            }) 
+          if (json.results){
+            this.setState({ suggestions: json.results}) 
+          }else {
+              this.setState({ suggestions: ""})
+            } 
             console.log(json.results)
-        //     if (json.message){
-        //       alert(json.message)
-        //     } else {
-        //   }
       },(error) => {console.error(error)});
 
     }
@@ -127,37 +130,34 @@ class FoodForm extends React.Component {
   render(){
 
     return (
-      <div >
-        <ProgressBarParent total_co2={this.state.total_co2} />
-        <h2>Add Items to Grocery List</h2>
-        <form className="search-food" onSubmit={this.handleSubmit}>
+      <div className='FoodForm-Component'>
+        
+        <Co2Summary total_co2={this.state.total_co2} />
+        
+        <form className="food-form" onSubmit={this.handleSubmit}>
           <label htmlFor="foodId">
-            Food ID:
-            <input
+            <Input
               id="foodId"
               name="foodId"
               value={this.state.foodId}
-              placeholder="Enter Food ID"
+              placeholder=" Add Items to List"
               onChange={this.handleAutocompleteChange}
             />
-            <ul >
+            <ul id="search-suggestions">
               {this.displayResults()}
             </ul>
           </label>
-          
-          <span></span>
           <label htmlFor="foodQty">
-            Quantity (kg):
-            <input
+            <Input
               id="foodQty"
               name="foodQty"
               value={this.state.foodQty}
-              placeholder="Enter Quantity"
-              onChange={this.handleChange}
+              placeholder=" Quantity (kg)"
+              onChange={this.handleQtyChange}
             />
           </label>
           
-          <button>Submit</button>
+          <ButtonAdd id="add">Add</ButtonAdd>
           
         </form>
         

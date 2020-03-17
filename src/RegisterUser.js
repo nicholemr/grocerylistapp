@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Input from './styled/Input'
+import Button from './styled/Button'
 
 class RegisterUser extends Component {
     constructor(props) {
@@ -43,12 +45,11 @@ class RegisterUser extends Component {
     render() { 
 
         return ( 
-            <div>
-                <h3>Register</h3>
+            <div className='register'>
+                <h3>Register:</h3>
                 <form onSubmit={this.handleSubmit}>
                     <label htmlFor="register-username">
-                    Username:
-                    <input
+                    <Input
                         id="register-username"
                         type="text"
                         name="username"
@@ -58,8 +59,7 @@ class RegisterUser extends Component {
                     />
                     </label>
                     <label htmlFor="register-password">
-                    Password:
-                    <input
+                    <Input
                         id="register-password"
                         type="password"
                         name="password"
@@ -68,7 +68,7 @@ class RegisterUser extends Component {
                         onChange={this.handleChange}
                     />
                     </label>
-                    <button>Submit</button>
+                    <Button>Submit</Button>
                 </form>
                 
             </div>

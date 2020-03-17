@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import Button from './styled/Button' 
+
+
 class LogOut extends Component {
     constructor(props) {
         super(props);
@@ -31,11 +34,11 @@ class LogOut extends Component {
     render() { 
 
         return ( 
-        <div>
-        <button onClick={this.handleClick}>
-            Log Out
-        </button>
-        </div>
+        // <div>
+        <Button className="logout" onClick={this.handleClick}>
+            log out
+        </Button>
+        // </div>
          );
     }
 }

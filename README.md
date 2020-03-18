@@ -30,7 +30,7 @@ The app also provides search suggestions for the food items available in the dat
 
 Search suggestions were implemented using a Trie data structure programmed in Python. The tree is formed using the food items from my database, and the search algorithm traverses tree nodes and returns the matching results.
 
-On the front-end, a React class component tracks user input using its state, where each state change sends a request to the server’s API. Each successful request sends back a JSON object with suggestion items then displayed by the component.
+On the front-end, a ReactJS class component tracks user input using its state, where each state change sends a request to the server’s API. Each successful request sends back a JSON object with suggestion items then displayed by the component.
 
 
 ![adding to list](https://github.com/nicholemr/grocerylistapp/blob/master/READme/addingItems.gif)
@@ -39,7 +39,7 @@ On the front-end, a React class component tracks user input using its state, whe
 
 The front-end was built entirely on ReactJS.
 
-The grocery list data is stored in the state variable of a React class component at the top of the component tree. This data flows down the component tree using React properties to components in the list view, where each item is itself another React component. 
+The grocery list data is stored in the state variable of a ReactJS class component at the top of the component tree. This data flows down the component tree using ReactJS properties to components in the list view, where each item is itself another React component. 
 
 The state of this application was managed using ReactJS' built-in methods instead of a state management library such as Redux.
 

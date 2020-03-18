@@ -41,8 +41,6 @@ The application's front-end was built entirely on ReactJS.
 
 The grocery list data is stored in the state variable of a React class component at the top of the component tree. This data flows down the component tree using React properties to components in the list view, where each item is itself another React component. 
 
-The state of this application was managed using ReactJS' built-in methods instead of a state management library such as Redux.
-
 ## Installation
 ```
 $ git clone https://github.com/nicholemr/grocerylistapp.git

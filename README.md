@@ -12,8 +12,6 @@ The app also provides search suggestions for the food items available in the dat
 - ReactJS
 - Python
 - JavaScript
-- HTML
-- CSS
 - Flask
 - PostgreSQL
 - SQLAlchemy

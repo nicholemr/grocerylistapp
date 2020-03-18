@@ -36,7 +36,7 @@ The grocery list data is stored in the state variable of a React class component
 
 #### Search Suggestions
 
-Search suggestions were implemented using a Trie data structure programmed in Python. The tree is formed using the food items from my database, and the search algorithm traverses tree nodes and returns the matching results.
+Search suggestions were implemented using a Trie data structure programmed in Python. The tree is formed using the food items from my database, and a search algorithm traverses tree nodes and returns the matching results.
 
 On the front-end, a ReactJS class component tracks user input using its state, where each state change sends a request to the server’s API. Each successful request sends back a JSON object with suggestion items then displayed by the component.
 

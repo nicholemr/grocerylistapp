@@ -30,7 +30,7 @@ The app also provides search suggestions for the food items available in the dat
 
 Search suggestions were implemented using a Trie data structure programmed in Python. The tree is formed using the food items from my database, and the search algorithm traverses tree nodes and returns the matching results.
 
-On the front-end, I designed a React class component to track user input using its state, where each state change sends a request to my server’s API. Each successful request sends back a JSON object with suggestion items then displayed by the component.
+On the front-end, a React class component tracks user input using its state, where each state change sends a request to the server’s API. Each successful request sends back a JSON object with suggestion items then displayed by the component.
 
 
 ![adding to list](https://github.com/nicholemr/grocerylistapp/blob/master/READme/addingItems.gif)

@@ -37,7 +37,7 @@ On the front-end, a ReactJS class component tracks user input using its state, w
 
 ### ReactJS
 
-The front-end was built entirely on ReactJS.
+The application's front-end was built entirely on ReactJS.
 
 The grocery list data is stored in the state variable of a ReactJS class component at the top of the component tree. This data flows down the component tree using ReactJS properties to components in the list view, where each item is itself another React component. 
 

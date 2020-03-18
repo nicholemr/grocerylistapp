@@ -21,10 +21,11 @@ The app also provides search suggestions for the food items available in the dat
 - React-Spring Animations
 
 
-### Loading the Grocery List
+## Loading the Grocery List
 
 ![log-in page](https://github.com/nicholemr/grocerylistapp/blob/master/READme/login.gif)
 
+## The App
 ### Updating the Grocery List
 
 Search suggestions were implemented using a Trie data structure programmed in Python. The tree is formed using the food items from my database, and the search algorithm traverses tree nodes and returns the matching results.
@@ -34,12 +35,13 @@ On the front-end, I designed a React class component to track user input using i
 
 ![adding to list](https://github.com/nicholemr/grocerylistapp/blob/master/READme/addingItems.gif)
 
-## Installation
+### Installation
 ```
 $ git clone https://github.com/nicholemr/grocerylistapp.git
 $ virtualenv env
 $ source env/bin/activate
 $ pip install -r requirements.txt
 $ createdb groceries
+
 $ python3 server/seed.py
 ```

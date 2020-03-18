@@ -21,7 +21,7 @@ The app also provides search suggestions for the food items available in the dat
 - React-Spring Animations
 
 
-### Login
+### Loading the Grocery List
 
 ![log-in page](https://github.com/nicholemr/grocerylistapp/blob/master/READme/login.gif)
 

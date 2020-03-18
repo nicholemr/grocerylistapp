@@ -20,12 +20,12 @@ The app also provides search suggestions for the food items available in the dat
 - React-Reveal
 - React-Spring Animations
 
-
-## Loading the Grocery List
+## The App
+### Loading the Grocery List
 
 ![log-in page](https://github.com/nicholemr/grocerylistapp/blob/master/READme/login.gif)
 
-## The App
+
 ### Updating the Grocery List
 
 Search suggestions were implemented using a Trie data structure programmed in Python. The tree is formed using the food items from my database, and the search algorithm traverses tree nodes and returns the matching results.

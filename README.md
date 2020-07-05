@@ -30,9 +30,7 @@ The app also provides search suggestions for the food items available in the dat
 
 #### ReactJS
 
-The application's front-end was built entirely on ReactJS.
-
-The grocery list data is stored in the state variable of a React class component at the top of the component tree. This data flows down the component tree using React properties to components in the list view, where each grocery item is itself another React component. 
+The application's front-end was built entirely on ReactJS using create-react-app.
 
 #### Search Suggestions
 
